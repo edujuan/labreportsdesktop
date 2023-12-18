@@ -1,12 +1,9 @@
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
-import 'sideebr_model.dart';
-export 'sideebr_model.dart';
+import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:provider/provider.dart';
+
 
 class SideebrWidget extends StatefulWidget {
   const SideebrWidget({Key? key}) : super(key: key);
@@ -16,23 +13,23 @@ class SideebrWidget extends StatefulWidget {
 }
 
 class _SideebrWidgetState extends State<SideebrWidget> {
-  late SideebrModel _model;
+  // late SideebrModel _model;
 
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
-    _model.onUpdate();
+    // _model.onUpdate();
   }
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => SideebrModel());
+    // _model = createModel(context, () => SideebrModel());
   }
 
   @override
   void dispose() {
-    _model.maybeDispose();
+    // _model.maybeDispose();
 
     super.dispose();
   }
@@ -70,7 +67,7 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                     color: Color(0xFFF1F4F8),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Padding(
+                  child: const Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -85,14 +82,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                           child: Text(
                             'Search',
-                            style: FlutterFlowTheme.of(context)
-                                .labelLarge
-                                .override(
-                                  fontFamily: 'Plus Jakarta Sans',
-                                  color: Color(0xFF606A85),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
                           ),
                         ),
                       ],
@@ -108,7 +97,7 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                     color: Color(0xFF216A6D),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Column(
+                  child: const Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
@@ -122,14 +111,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Name: Müller, Thomas',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -146,14 +127,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Date: 07.12.2023',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -170,14 +143,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Results: All Healthy',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -202,7 +167,7 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                     ],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Column(
+                  child: const Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
@@ -216,14 +181,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Name: Neuer, Manuel',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -240,14 +197,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Date: 07.12.2023',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -264,14 +213,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Results: All Healthy',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -296,7 +237,7 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                     ],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Column(
+                  child: const Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
@@ -310,14 +251,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Name: Kimmich, Joshua',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -334,14 +267,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Date: 08.12.2023',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
@@ -358,14 +283,6 @@ class _SideebrWidgetState extends State<SideebrWidget> {
                                   EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Results: All Healthy',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      color: Color(0xFF15161E),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                               ),
                             ),
                           ],
