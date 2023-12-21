@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'classes.dart';
+
 
 class Dashboard5Widget extends StatefulWidget {
-  const Dashboard5Widget({Key? key}) : super(key: key);
+  final Function setSelectedLabReportAndPatient;
+  final LabReportAndPatient? selectedPatient;
+
+  const Dashboard5Widget({required this.setSelectedLabReportAndPatient, this.selectedPatient, Key? key}) : super(key: key);
 
   @override
   _Dashboard5WidgetState createState() => _Dashboard5WidgetState();
@@ -44,13 +49,13 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
       constraints: const BoxConstraints(
         maxHeight: 140,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             blurRadius: 3,
-            color: const Color(0x33000000),
-            offset: const Offset(0, 1),
+            color: Color(0x33000000),
+            offset: Offset(0, 1),
           )
         ],
       ),
@@ -59,7 +64,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
           const Expanded(
             child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
-              child: Text('Müller, Thomas (07.12.2023)'),
+              child: Text('Ja'),
             ),
           ),
           Expanded(
@@ -118,6 +123,20 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
   }
 
   Widget _buildPatientProfileSection() {
+  if (widget.selectedPatient == null) {
+    return _buildSectionContainer(
+      children: [Text('No patient selected')],
+    );
+  }
+
+  LabReportAndPatient patient = widget.selectedPatient!;
+  String patientInfo = 'Name: ${patient.patient.name}\n'
+                       'Birth Date: ${patient.patient.birthDate}\n'
+                       'Weight: ${patient.patient.history?.weight ?? 'Unknown'}kg\n'
+                       'Height: ${patient.patient.history?.height ?? 'Unknown'}cm';
+
+  String patientHistory = patient.patient.history?.text ?? 'No history available';
+
   return _buildSectionContainer(
     children: [
       Row(
@@ -125,16 +144,16 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
           Expanded(
             child: _buildPatientProfileRow(
               'Patient Profile',
-              'Gender: Male',
-              'Age: 34',
-              'Weight: 76kg',
-              'Height: 185cm',
+              patientInfo,
+              '',  // Other details can be added as needed
+              '',
+              '',
             ),
           ),
           Expanded(
             child: _buildPatientProfileRow(
               'Anamnesis',
-              'Patient came for yearly >30 check up...',
+              patientHistory,
               '',  // Other details can be added as needed
               '',
               '',
@@ -145,6 +164,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
     ],
   );
 }
+
 
 
   Widget _buildPatientProfileRow(String title, String line1, String line2, String line3, String line4) {
@@ -174,17 +194,23 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
   }
 
 
-  Widget _buildBiomarkersSection() {
+Widget _buildBiomarkersSection() {
+  // Check if a biomarker is selected
+  if (widget.selectedPatient == null) {
     return _buildSectionContainer(
-      children: [
-        _buildBiomarkerRow('Blood Glucose', '70 mg/dL'),
-        _buildBiomarkerRow('Triglyceride', '150 mg/dL'),
-        _buildBiomarkerRow('Cholesterol HDL', '55 mg/dL'),
-        _buildBiomarkerRow('Cholesterol LDL', '130 mg/dL'),
-        // Add more biomarker rows as needed
-      ],
+      children: [Text('No biomarker selected')],
     );
   }
+
+  LabReportAndPatient patient = widget.selectedPatient!;
+
+  return _buildSectionContainer(
+    children: [
+      _buildBiomarkerRow(patient.patient.name,'${patient.labReport.biomarkerValues.toString()} '),
+      // You can add more rows if needed
+    ],
+  );
+}
 
   Widget _buildBiomarkerRow(String title, String value) {
     return Padding(
@@ -234,6 +260,9 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
       ),
     );
   }
+
+
+
 
   Widget _buildSectionContainer({required List<Widget> children}) {
     return Padding(

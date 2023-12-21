@@ -36,6 +36,8 @@ dependencies:
   url_launcher_android: 6.0.27
   url_launcher_ios: 6.1.4
   url_launcher_platform_interface: 2.1.2
+  json_annotation: ^4.8.1
+
 
 
 dev_dependencies:
@@ -44,6 +46,10 @@ dev_dependencies:
 
   flutter_test:
     sdk: flutter
+
+  json_serializable: ^6.7.1
+  uuid: ^4.2.2
+
 
 flutter:
   uses-material-design: true
