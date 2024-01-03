@@ -1,3 +1,5 @@
+// import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'classes.dart';
 
@@ -207,13 +209,68 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
   Widget _buildBiomarkersList() {
     var labandpatient = widget.selectedPatient!;
     return _buildSectionContainer(
-      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 18)).toList(),
+      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 179, minimumRange: 100)).toList(),
     );
   }
 
- Widget _buildBiomarkerRow(String title, String value, double valuePosition) {
-  const double blackContainerHeight = 20;
-  const double redLineHeight = 30; // This is taller than the black container
+Widget _buildBiomarkerRow(
+  String title, 
+  String value, 
+  double valuePosition, {
+  double? minimumRange, 
+  double? maximumRange
+}) {
+  const double rangeSize = 120;
+  
+  double greenContainerWidth = 70;
+  Alignment greenContainerAlignment = Alignment.center;
+  double lineLeftPosition;
+
+  if (minimumRange != null && maximumRange != null) {
+    // Both ranges are provided
+    greenContainerWidth = 70; // Or any other width you desire
+    greenContainerAlignment = Alignment.center;
+
+      if (valuePosition>minimumRange && valuePosition<maximumRange) {
+        lineLeftPosition = rangeSize / 2 + (greenContainerWidth / (maximumRange - minimumRange)) * (valuePosition - (minimumRange + maximumRange) / 2);
+      } else if (valuePosition<minimumRange) {
+        lineLeftPosition = 17.5;
+      } else if (valuePosition>maximumRange) {
+        lineLeftPosition = 107.5;
+      } else {
+        lineLeftPosition = rangeSize / 2; // Default initialization
+      }
+
+  } else if (minimumRange != null) {
+    // Only minimumRange is provided
+    greenContainerWidth = 90;
+    greenContainerAlignment = Alignment.centerRight;
+
+    if (valuePosition>=minimumRange && valuePosition<minimumRange*1.8) {
+        lineLeftPosition = 30+greenContainerWidth*((valuePosition-minimumRange)/(minimumRange));
+      } else if (valuePosition>=minimumRange*1.8) {
+        lineLeftPosition = 112; 
+      }  else {
+        lineLeftPosition = 17.5;
+      } 
+
+  } else if (maximumRange != null) {
+    // Only maximumRange is provided
+    greenContainerWidth = 90;
+    greenContainerAlignment = Alignment.centerLeft;
+
+    if (valuePosition<=maximumRange) {
+        lineLeftPosition = greenContainerWidth*(valuePosition/maximumRange);
+      } else {
+        lineLeftPosition = 107.5;
+      } 
+
+  } else {
+    // Neither range is provided
+    greenContainerWidth = 70; // Default width when no ranges are given
+    greenContainerAlignment = Alignment.center;
+    lineLeftPosition = rangeSize / 2; // Center the line as a default position
+  }
 
   return Padding(
     padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
@@ -227,23 +284,21 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
             const SizedBox(height: 100, child: VerticalDivider(width: 24, thickness: 4, indent: 12, endIndent: 12, color: Colors.black)),
             Expanded(child: Padding(padding: const EdgeInsetsDirectional.fromSTEB(8, 12, 16, 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title)]))),
             Expanded(child: Text(value)),
-            Expanded(
+            SizedBox(
+              width: rangeSize,
               child: Stack(
-                clipBehavior: Clip.none, // Allow children to draw outside of the stack
                 alignment: Alignment.center,
+                clipBehavior: Clip.none,
                 children: [
-                  Container(width: 300, height: blackContainerHeight, decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10))),
-                  Container(width: 290, height: 10, decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10))),
+                  Container(width: 300, height: 10, decoration: BoxDecoration(color: const Color.fromARGB(255, 221, 221, 221), borderRadius: BorderRadius.circular(10))),
+                  Align(
+                    alignment: greenContainerAlignment,
+                    child: Container(width: greenContainerWidth, height: 10, decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10))),
+                  ),
                   Positioned(
-                    left: 50, // Adjust this based on the value
-                    child: OverflowBox(
-                      minWidth: 4,
-                      maxWidth: 4,
-                      minHeight: redLineHeight,
-                      maxHeight: redLineHeight,
-                      alignment: Alignment.center,
-                      child: Container(width: 4, height: redLineHeight, color: Colors.red), // This is the line indicating the value
-                    ),
+                    left: lineLeftPosition,
+                    top: -3,
+                    child: Container(width: 2, height: 16, color: Colors.black),
                   ),
                 ],
               ),
@@ -254,10 +309,6 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
     ),
   );
 }
-
-
-
-
 
 
   BoxDecoration _sectionDecoration() {
@@ -329,8 +380,5 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget> with TickerProvider
       ),
     );
   }
-
-
-
 
 }
