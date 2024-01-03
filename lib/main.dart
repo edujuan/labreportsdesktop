@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lab4_doctors/dashboard.dart';
-import 'package:lab4_doctors/sideebr_widget.dart';
+import 'package:lab4_doctors/side_bar.dart';
 import 'classes.dart'; // Make sure this package is added in your pubspec.yaml file
 
 void main() {
