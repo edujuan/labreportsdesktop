@@ -1,129 +1,76 @@
 import 'package:flutter/material.dart';
-import 'biomarker.dart';
-import 'classes.dart'; // Assuming this is where LabReportAndPatient, LabReportDto, PatientHistory, Patient are defined
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lab4_doctors/sidebar/bloc/bloc.dart';
+import 'package:provider/provider.dart';
+import 'data/data.dart';
 
 class SidebarWidget extends StatefulWidget {
-  final Function(LabReportAndPatient) setSelectedLabReportAndPatient;
-  const SidebarWidget({required this.setSelectedLabReportAndPatient, Key? key}) : super(key: key);
+  const SidebarWidget({super.key});
 
   @override
   _SidebarWidgetState createState() => _SidebarWidgetState();
 }
 
 class _SidebarWidgetState extends State<SidebarWidget> {
-  int _selectedIndex = 0;
-  bool showYes = false; // Toggle between showing "Yes" or "No"
-
-  final List<LabReportAndPatient> yesLabReports = [];
-  final List<LabReportAndPatient> noLabReports = [];
+  late final SidebarBloc _bloc;
 
   @override
   void initState() {
     super.initState();
 
-    // Mock data initialization
-    for (int i = 0; i < 8; i++) {
-      var labReport = LabReportDto(
-        id: 'lab-report-id-$i',
-        name: 'Blood test $i',
-        reportDate: DateTime.now(),
-        // Assuming you have a Map<String, Biomarker> for biomarkerValues
-        biomarkerValues: <String, Biomarker>{
-            "Test 1": const Biomarker(
-                id: "",
-                name: "Test 1",
-                bucket: "Bucket 1",
-                value: 2,
-                minValue: 1,
-                maxValue: 3,
-                unit: "unit",
-                biomarkerDescription: "Description",
-                rangeDescription: "Range Desc"),
-            "Test 2": const Biomarker(
-                id: "",
-                name: "Test 2",
-                bucket: "Bucket 1",
-                value: 2,
-                minValue: 1,
-                maxValue: 3,
-                unit: "unit",
-                biomarkerDescription: "Description",
-                rangeDescription: "Range Desc"),
-            "Test 3": const Biomarker(
-                id: "",
-                name: "Test 3",
-                bucket: "Bucket 2",
-                value: 2,
-                minValue: 1,
-                maxValue: 3,
-                unit: "unit",
-                biomarkerDescription: "Description",
-                rangeDescription: "Range Desc")
-          }, // Replace with actual biomarker values
-        patientId: 'patient-id-$i',
-        executiveSummary: "Executive summary of lab report $i",
-        recommendations: "Recommendations based on lab report $i",
-        doctorName: "Dr. Smith $i",
-      );
-
-      var patientHistory = PatientHistory(
-        text: "Patient $i has a history of...",
-        weight: 70 + i,
-        height: 175 + i,
-      );
-
-      var patient = Patient(
-        name: "John Doe $i",
-        history: patientHistory,
-        birthDate: DateTime(1985, 5, 20).add(Duration(days: i * 365)),
-      );
-
-      // Example condition for Yes or No categorization
-      if (i % 2 == 0) { // Arbitrary condition: even indices are 'Yes', odd are 'No'
-        yesLabReports.add(LabReportAndPatient(labReport: labReport, patient: patient));
-      } else {
-        noLabReports.add(LabReportAndPatient(labReport: labReport, patient: patient));
-      }
-    }
+    _bloc = Provider.of<SidebarBloc>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    List<LabReportAndPatient> displayList = showYes ? yesLabReports : noLabReports;
+    return BlocBuilder<SidebarBloc, SidebarState>(
+      bloc: _bloc,
+      builder: (context, state) {
+        if(state.status == SidebarStatus.initial){
+          return const Text("Loading...");
+        }
+        if(state.status == SidebarStatus.failure){
+          return const Text("Error...");
+        }
 
-    return Column(
-      children: [
-        Switch(
-          value: showYes,
-          onChanged: (value) {
-            setState(() {
-              showYes = value;
-              _selectedIndex = 0; // Reset selection when toggling
-            });
-          },
-        ),
-        Expanded(
-          child: NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-              widget.setSelectedLabReportAndPatient(displayList[index]);
-            },
-            labelType: NavigationRailLabelType.all,
-            destinations: displayList
-                .map((e) => buildNavigationDestination(
-                    e.patient.name, e.labReport.reportDate.toString(), "All Healthy", displayList.indexOf(e)))
-                .toList(),
-          ),
-        ),
-      ],
+        List<LabReportAndPatient> displayList = state.showReportsInReview ? state.inReviewLabReports : state.deniedLabReports;
+
+        return Column(
+          children: [
+            Switch(
+              value: state.showReportsInReview,
+              onChanged: (value) {
+                _bloc.add(SwitchReportTabEvent(value));
+                if(value) {
+                  _bloc.add(FetchReportsInReviewEvent());
+                } else {
+                  _bloc.add(FetchDeniedReportsEvent());
+                }
+              },
+            ),
+            Expanded(
+              child: NavigationRail(
+                selectedIndex: state.selectedIndex,
+                onDestinationSelected: (int index) {
+                  _bloc.add(SelectReportEvent(index, displayList[index]));
+                },
+                labelType: NavigationRailLabelType.all,
+                destinations: displayList
+                  .map((e) => buildNavigationDestination(
+                      e.patient.name, e.labReport.reportDate.toString(), "All Healthy", displayList.indexOf(e), state.selectedIndex
+                  )).toList(),
+              ),
+            ),
+          ],
+        );
+      }
     );
+
+
   }
 
-  NavigationRailDestination buildNavigationDestination(String name, String date, String results, int index) {
-    bool isSelected = _selectedIndex == index;
+  NavigationRailDestination buildNavigationDestination(String name, String date, String results, int index, int selectedIndex) {
+    bool isSelected = selectedIndex == index;
 
     return NavigationRailDestination(
       icon: Card(

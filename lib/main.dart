@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lab4_doctors/core/dependencies.dart';
 import 'package:lab4_doctors/dashboard.dart';
 import 'package:lab4_doctors/side_bar.dart';
-import 'classes.dart'; // Make sure this package is added in your pubspec.yaml file
+import 'data/data.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,29 +18,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  LabReportAndPatient? selectedPatient;
-
-  void setSelectedLabReportAndPatient(LabReportAndPatient patient) {
-    setState(() {
-      selectedPatient = patient;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Health Report',
-        home: Scaffold(
-        
-          body: Row(
-            children: [
-              SidebarWidget(setSelectedLabReportAndPatient:setSelectedLabReportAndPatient),
-              Expanded(child: Dashboard5Widget(
-                  setSelectedLabReportAndPatient:setSelectedLabReportAndPatient,
-                  selectedPatient:selectedPatient,
-                  )),
-            ],
-          ),),        
+    return const DependenciesScope(
+      child: MaterialApp(
+          title: 'Health Report',
+          home: Scaffold(
+          
+            body: Row(
+              children: [
+                SidebarWidget(),
+                Expanded(child: Dashboard5Widget()),
+              ],
+            ),),        
+      ),
     );
   }
 }

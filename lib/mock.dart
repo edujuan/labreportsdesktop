@@ -53,7 +53,7 @@
 //   );
 
 //   // Create a PatientHistory
-//   var patientHistory = PatientHistory(
+//   var patientHistory.dart = PatientHistory(
 //     text: "Patient has a history of...",
 //     weight: 70,
 //     height: 175,
@@ -62,7 +62,7 @@
 //   // Create a Patient
 //   var patient = Patient(
 //     name: "John Doe",
-//     history: patientHistory,
+//     history: patientHistory.dart,
 //     birthDate: DateTime(1985, 5, 20),
 //   );
 
