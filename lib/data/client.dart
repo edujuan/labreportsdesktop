@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:lab4_doctors/data/models/reportEdit.dart';
 
 import 'models/models.dart';
 
@@ -159,6 +160,24 @@ class ApiClient {
       return dummyData;
     }
   }
+
+  Future<Report?> editReport(String id, String? summary, String? recommendation) async {
+    final response = await _request('/lab-reports/$id', body: ReportEdit(
+        executiveSummary: summary, recommendations: recommendation).toJson());
+    return Report.fromJson(response);
+  }
+
+  Future<void> approve(String id) async {
+    await _request('/lab-reports/approve/$id', shouldBePost: true);
+  }
+
+  Future<void> deny(String id, bool patientShouldSchedule) async {
+    await _request(
+        '/lab-reports/deny/$id',
+        queryParams: {"patientShouldSchedule": "$patientShouldSchedule"},
+        shouldBePost: true
+    );
+  }
 }
 
 /// HTTP request logic
@@ -167,13 +186,14 @@ extension ApiClientX on ApiClient {
     String endpoint, {
     Map<String, String>? queryParams,
     Map<String, dynamic>? body,
+    bool shouldBePost = false
   }) async {
     Uri uri = _constructUrl(endpoint, queryParams: queryParams);
 
     http.Response response;
 
     try {
-      if (body == null) {
+      if (body == null && !shouldBePost) {
         response = await _httpClient.get(
           uri,
           headers: <String, String>{

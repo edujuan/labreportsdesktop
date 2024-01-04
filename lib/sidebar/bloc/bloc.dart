@@ -16,6 +16,7 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
     on<FetchDeniedReportsEvent>(_onFetchDeniedReports);
     on<SwitchReportTabEvent>(_onSwitchReportTab);
     on<SelectReportEvent>(_onSelectReport);
+    on<RemoveSelectedReport>(_onRemoveSelectedReport);
   }
 
   Future<void> _onFetchReportsInReview(
@@ -90,5 +91,33 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
   ) async {
     return emit(state.copyWith(
         selectedIndex: event.index, selectedLabReport: event.report));
+  }
+
+  Future<void> _onRemoveSelectedReport(
+      RemoveSelectedReport event,
+      Emitter<SidebarState> emit,
+) async {
+    if(state.selectedLabReport == null) {
+      return;
+    }
+    if(state.showReportsInReview) {
+      final inReviewLabReports = state.inReviewLabReports.toList();
+      inReviewLabReports.removeAt(state.selectedIndex);
+
+      return emit(state.copyWith(
+        selectedIndex: 0,
+        selectedLabReport: inReviewLabReports.isNotEmpty ? inReviewLabReports[0] : null,
+        inReviewLabReports: inReviewLabReports
+      ));
+    } else {
+      final deniedLabReports = state.deniedLabReports.toList();
+      deniedLabReports.removeAt(state.selectedIndex);
+
+      return emit(state.copyWith(
+          selectedIndex: 0,
+          selectedLabReport: deniedLabReports.isNotEmpty ? deniedLabReports[0] : null,
+          deniedLabReports: deniedLabReports
+      ));
+    }
   }
 }

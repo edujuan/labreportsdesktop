@@ -97,7 +97,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [ 
           _buildHeaderText(selectedReport),
-          _buildProfileCards(),
+          _buildProfileCards(selectedReport),
         ],
       ),
     );
@@ -114,7 +114,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
     );
   }
 
-  Widget _buildProfileCards() {
+  Widget _buildProfileCards(LabReportAndPatient? selectedReport) {
     return Expanded(
       child: SizedBox(
         height: 55,
@@ -122,13 +122,13 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
           padding: EdgeInsets.zero,
           itemCount: 3,
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => _buildProfileCard(index),
+          itemBuilder: (context, index) => _buildProfileCard(index, selectedReport),
         ),
       ),
     );
   }
 
-  Widget _buildProfileCard(int index) {
+  Widget _buildProfileCard(int index, LabReportAndPatient? selectedReport) {
     IconData iconData;
     String dialogContent;
     switch (index) {
@@ -138,7 +138,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
         break;
       case 1:
         iconData = Icons.close;
-        dialogContent = 'Send notification to patient or hide lab report?';
+        dialogContent = 'Notify patient to schedule an appointment?';
         break;
       case 2:
         iconData = Icons.check;
@@ -148,14 +148,21 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
         iconData = Icons.help;
         dialogContent = 'Default action';
     }
-    return _profileCardContainer(iconData, dialogContent, index == 1);
+    return _profileCardContainer(iconData, dialogContent, index == 1, selectedReport);
   }
 
-  Widget _profileCardContainer(IconData icon, String content, bool showDialog) {
+  Widget _profileCardContainer(IconData icon, String content, bool showDialog, LabReportAndPatient? selectedReport) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 8, 8),
       child: GestureDetector(
-        onTap: () => showDialog ? _showDialog(context, content) : null,
+        onTap: () => {
+          if(showDialog) {
+            _showDialog(context, content, selectedReport)
+          } else if(icon == Icons.check && selectedReport != null) {
+            _bloc.add(ApproveReportEvent(selectedReport.labReport.id)),
+            _sidebarBloc.add(RemoveSelectedReport())
+          }
+        },
         child: Container(
           width: 95,
           height: double.infinity,
@@ -517,7 +524,7 @@ Widget _buildBiomarkerRow(
 
 
 
-  void _showDialog(BuildContext context, String content) {
+  void _showDialog(BuildContext context, String content, LabReportAndPatient? selectedReport) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -526,11 +533,23 @@ Widget _buildBiomarkerRow(
           content: Text(content),
           actions: <Widget>[
             TextButton(
-                child: const Text('Hide report'),
-                onPressed: () => Navigator.of(context).pop()),
+                child: const Text('No'),
+                onPressed: () => {
+                  if(selectedReport != null) {
+                    _bloc.add(DenyReportEvent(selectedReport.labReport.id, false)),
+                    _sidebarBloc.add(RemoveSelectedReport())
+                  },
+                  Navigator.of(context).pop()
+                }),
             TextButton(
-                child: const Text('Send to Patient'),
-                onPressed: () => Navigator.of(context).pop()),
+                child: const Text('Yes'),
+                onPressed: () => {
+                  if(selectedReport != null) {
+                    _bloc.add(DenyReportEvent(selectedReport.labReport.id, true)),
+                    _sidebarBloc.add(RemoveSelectedReport())
+                  },
+                  Navigator.of(context).pop()
+                }),
           ],
         );
       },

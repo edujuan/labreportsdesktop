@@ -16,12 +16,12 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<EditReportEvent>(
       _onEditReport
     );
-    /*on<ApproveReportEvent>(
-
+    on<ApproveReportEvent>(
+      _onApproveReport
     );
     on<DenyReportEvent> (
-
-    );*/
+      _onDenyReport
+    );
   }
 
   Future<void> _onEditReport(
@@ -29,18 +29,45 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     Emitter<DashboardState> emit,
   ) async {
     try {
-      // await _client.sendMessage(event.message);
-      // final result = await _client.getMessages();
-
-      /*final messages = state.messages;
-
-      final result = <Message>[
-        ...messages,
-        Message(id: 'unique-id', message: event.message, userId: 'me'),
-      ];*/
+      await _client.editReport(event.id, event.summary, event.recommendation);
+      print("Report edited");
 
       return emit(
         state.copyWith(
+          status: DashboardStatus.success,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(status: DashboardStatus.failure));
+    }
+  }
+
+  Future<void> _onApproveReport(
+      ApproveReportEvent event,
+      Emitter<DashboardState> emit,
+      ) async {
+    try {
+      await _client.approve(event.id);
+      return emit(
+        state.copyWith(
+          status: DashboardStatus.success,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(status: DashboardStatus.failure));
+    }
+  }
+
+  Future<void> _onDenyReport(
+      DenyReportEvent event,
+      Emitter<DashboardState> emit,
+      ) async {
+    try {
+      await _client.deny(event.id, event.patientShouldSchedule);
+
+      return emit(
+        state.copyWith(
+          status: DashboardStatus.success,
         ),
       );
     } catch (_) {
