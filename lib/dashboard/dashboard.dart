@@ -272,7 +272,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
     var labandpatient = selectedReport;
     return _buildSectionContainer(
-      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 300, minimumRange: 100, maximumRange: 300)).toList(),
+      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), biomarker.value, minimumRange: biomarker.minValue, maximumRange: biomarker.maxValue)).toList(),
     );
   }
 
