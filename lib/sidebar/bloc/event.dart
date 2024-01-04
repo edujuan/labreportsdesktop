@@ -21,3 +21,5 @@ final class SelectReportEvent extends SidebarEvent {
 
   SelectReportEvent(this.index, this.report);
 }
+
+final class RemoveSelectedReport extends SidebarEvent {}

@@ -12,10 +12,15 @@ final class EditReportEvent extends DashboardEvent {
   EditReportEvent(this.id, {this.summary, this.recommendation});
 }
 
-final class ApproveReportEvent extends DashboardEvent {}
+final class ApproveReportEvent extends DashboardEvent {
+  final String id;
+
+  ApproveReportEvent(this.id);
+}
 
 final class DenyReportEvent extends DashboardEvent {
+  final String id;
   final bool patientShouldSchedule;
 
-  DenyReportEvent(this.patientShouldSchedule);
+  DenyReportEvent(this.id, this.patientShouldSchedule);
 }
