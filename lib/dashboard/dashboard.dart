@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-import 'data/data.dart';
+import '../data/data.dart';
 import 'package:lab4_doctors/dashboard/bloc/bloc.dart';
 import 'package:lab4_doctors/sidebar/bloc/bloc.dart';
 

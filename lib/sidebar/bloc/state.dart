@@ -50,5 +50,5 @@ final class SidebarState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, inReviewLabReports, deniedLabReports];
+  List<Object?> get props => [status, inReviewLabReports, deniedLabReports, showReportsInReview, selectedIndex, selectedLabReport];
 }

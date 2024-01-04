@@ -25,9 +25,12 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
     try {
       final result = await _client.getReportsInReview();
       return emit(state.copyWith(
-        status: SidebarStatus.success,
-        inReviewLabReports: result,
-        selectedLabReport: state.selectedLabReport == null && result.isNotEmpty ? result[0] : state.selectedLabReport));
+          status: SidebarStatus.success,
+          inReviewLabReports: result,
+          selectedLabReport:
+              state.selectedLabReport == null && result.isNotEmpty
+                  ? result[0]
+                  : state.selectedLabReport));
     } catch (_) {
       emit(state.copyWith(status: SidebarStatus.failure));
     }
@@ -40,10 +43,12 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
     try {
       final result = await _client.getDeniedReports();
       return emit(state.copyWith(
-        status: SidebarStatus.success,
-        deniedLabReports: result,
-        selectedLabReport: state.selectedLabReport == null && result.isNotEmpty ? result[0] : state.selectedLabReport
-      ));
+          status: SidebarStatus.success,
+          deniedLabReports: result,
+          selectedLabReport:
+              state.selectedLabReport == null && result.isNotEmpty
+                  ? result[0]
+                  : state.selectedLabReport));
     } catch (_) {
       emit(state.copyWith(status: SidebarStatus.failure));
     }
@@ -53,17 +58,30 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
     SwitchReportTabEvent event,
     Emitter<SidebarState> emit,
   ) async {
-    SidebarStatus status = SidebarStatus.initial;
-    if(event.showReportsInReview && state.inReviewLabReports.isNotEmpty
-      || !event.showReportsInReview && state.deniedLabReports.isNotEmpty
-    ) {
-      status = SidebarStatus.success;
+    List<LabReportAndPatient> result;
+    try {
+      if (event.showReportsInReview) {
+        result = await _client.getReportsInReview();
+        return emit(state.copyWith(
+          status: SidebarStatus.success,
+          selectedIndex: 0,
+          selectedLabReport: result.isNotEmpty ? result[0] : null,
+          showReportsInReview: event.showReportsInReview,
+          inReviewLabReports: result,
+        ));
+      } else {
+        result = await _client.getDeniedReports();
+        return emit(state.copyWith(
+          status: SidebarStatus.success,
+          selectedIndex: 0,
+          selectedLabReport: result.isNotEmpty ? result[0] : null,
+          showReportsInReview: event.showReportsInReview,
+          deniedLabReports: result,
+        ));
+      }
+    } catch (_) {
+      emit(state.copyWith(status: SidebarStatus.failure));
     }
-    return emit(state.copyWith(
-        status: status,
-        selectedIndex: 0,
-        selectedLabReport: null,
-        showReportsInReview: event.showReportsInReview));
   }
 
   Future<void> _onSelectReport(
@@ -71,7 +89,6 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
     Emitter<SidebarState> emit,
   ) async {
     return emit(state.copyWith(
-        selectedIndex: event.index,
-        selectedLabReport: event.report));
+        selectedIndex: event.index, selectedLabReport: event.report));
   }
 }

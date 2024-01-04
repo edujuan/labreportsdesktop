@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lab4_doctors/core/dependencies.dart';
-import 'package:lab4_doctors/dashboard.dart';
-import 'package:lab4_doctors/side_bar.dart';
+import 'package:lab4_doctors/dashboard/dashboard.dart';
+import 'package:lab4_doctors/sidebar/side_bar.dart';
 import 'data/data.dart';
 
 void main() {
