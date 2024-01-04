@@ -37,13 +37,29 @@ class _SidebarWidgetState extends State<SidebarWidget> {
               ? state.inReviewLabReports
               : state.deniedLabReports;
           
-          return Column(
+          return Container(
+            constraints: BoxConstraints(minWidth: 230), // Set minimum width here
+            child: Column(         
             children: [
-              Switch(
-                value: state.showReportsInReview,
-                onChanged: (value) {
-                  _bloc.add(SwitchReportTabEvent(value));
+              Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: ToggleButtons(
+                isSelected: [state.showReportsInReview, !state.showReportsInReview],
+                onPressed: (int index) {
+                  _bloc.add(SwitchReportTabEvent(index == 0));
                 },
+                borderRadius: BorderRadius.circular(10),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('In Review'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Denied'),
+                  ),
+                ],
+              ),
               ),
               Expanded(
                 child: displayList.length < 2
@@ -81,8 +97,10 @@ class _SidebarWidgetState extends State<SidebarWidget> {
                       ),
               ),
             ],
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Widget buildNavigationDestination(

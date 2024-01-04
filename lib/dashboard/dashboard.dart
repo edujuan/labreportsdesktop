@@ -16,12 +16,15 @@ class Dashboard5Widget extends StatefulWidget {
 }
 
 class _Dashboard5WidgetState extends State<Dashboard5Widget>
-    with TickerProviderStateMixin {
+  with TickerProviderStateMixin {
   final TextEditingController _paragraphController = TextEditingController();
   final FocusNode _paragraphFocus = FocusNode();
 
   late final SidebarBloc _sidebarBloc;
   late final DashboardBloc _bloc;
+
+  final TextEditingController _newBoxController = TextEditingController();
+  final FocusNode _newBoxFocus = FocusNode(); 
 
   @override
   void initState() {
@@ -33,12 +36,15 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
 
   void _updateExecutiveSummaryController(String executiveSummary) {
     _paragraphController.text = executiveSummary;
+    
   }
 
   @override
   void dispose() {
     _paragraphController.dispose();
     _paragraphFocus.dispose();
+    _newBoxController.dispose(); // Add this line
+    _newBoxFocus.dispose();     // Add this line
     super.dispose();
   }
 
@@ -88,7 +94,8 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
       height: 140,
       decoration: _sectionDecoration(),
       child: Row(
-        children: [
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [ 
           _buildHeaderText(selectedReport),
           _buildProfileCards(selectedReport),
         ],
@@ -218,16 +225,43 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
   }
 
   Widget _buildEditableSummarySection(LabReportAndPatient? selectedReport) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-            Expanded(child: _buildBiomarkersSection(selectedReport)),
-          ] +
-          (selectedReport != null
-              ? [_buildParagraphBox(selectedReport)]
-              : <Widget>[]),
-    );
-  }
+  return LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints constraints) {
+      final double biomarkersMinWidth = 500; // Set your minimum width here
+      final double availableWidth = constraints.maxWidth;
+      final double biomarkersWidth = (availableWidth > biomarkersMinWidth)
+          ? biomarkersMinWidth
+          : availableWidth;
+
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: biomarkersWidth,
+            child: _buildBiomarkersSection(selectedReport),
+          ),
+          if (selectedReport != null)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildParagraphBox(selectedReport),
+                  _buildNewBox(),
+                ],
+              ),
+            ),
+        ],
+      );
+    },
+  );
+}
+
+
+
+
+
+
+
 
   Widget _buildBiomarkersSection(LabReportAndPatient? selectedReport) {
     return selectedReport == null
@@ -238,7 +272,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
     var labandpatient = selectedReport;
     return _buildSectionContainer(
-      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 300, minimumRange: 100, maximumRange: 300)).toList(),
+      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), biomarker.value, minimumRange: biomarker.minValue, maximumRange: biomarker.maxValue)).toList(),
     );
   }
 
@@ -260,6 +294,7 @@ Widget _buildBiomarkerRow(
   // Alignment greenContainerAlignment = Alignment.center;      
   Offset offsetValue = Offset(0,0);
   double lineLeftPosition;
+  Color lineColor = Colors.green;
 
   if (minimumRange != null && maximumRange != null) {
     // Both ranges are provided
@@ -270,10 +305,13 @@ Widget _buildBiomarkerRow(
         lineLeftPosition = rangeSize / 2 + (greenContainerWidth / (maximumRange - minimumRange)) * (valuePosition - (minimumRange + maximumRange) / 2);
       } else if (valuePosition<minimumRange) {
         lineLeftPosition = ((1-(greenContainerWidth/rangeSize))/3)*rangeSize;
+        lineColor = Colors.red;
       } else if (valuePosition>maximumRange) {
         lineLeftPosition = (1-((1-(greenContainerWidth/rangeSize))/3))*rangeSize;
+        lineColor = Colors.red;
       } else {
         lineLeftPosition = rangeSize / 2; // Default initialization
+        lineColor = Colors.green;
       }
 
   } else if (minimumRange != null) {
@@ -288,6 +326,7 @@ Widget _buildBiomarkerRow(
         lineLeftPosition = greenStart+greenContainerWidth*((valuePosition-minimumRange)/(minimumRange));
       } else if (valuePosition>=minimumRange*1.8) {
         lineLeftPosition = rangeSize*0.95; 
+        lineColor = Colors.red;
       }  else {
         lineLeftPosition = ((1-(greenContainerWidth/rangeSize))/2)*rangeSize;
       } 
@@ -300,6 +339,7 @@ Widget _buildBiomarkerRow(
     if (valuePosition<=maximumRange) {
         lineLeftPosition = greenContainerWidth*(valuePosition/maximumRange);
       } else {
+        lineColor = Colors.red;
         lineLeftPosition = (1-((1-(greenContainerWidth/rangeSize))/2))*rangeSize;
       } 
 
@@ -321,7 +361,7 @@ Widget _buildBiomarkerRow(
         padding: const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 2),
         child: Row(
           children: [
-            const SizedBox(height: 100, child: VerticalDivider(width: 24, thickness: 4, indent: 12, endIndent: 12, color: Colors.black)),
+            SizedBox(height: 100, child: VerticalDivider(width: 24, thickness: 4, indent: 12, endIndent: 12, color: lineColor)),
             Expanded(child: Padding(padding: const EdgeInsetsDirectional.fromSTEB(8, 12, 16, 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title)]))),
             Expanded(child: Text(value)),
             SizedBox(
@@ -449,6 +489,59 @@ Widget _buildBiomarkerRow(
       ),
     );
   }
+  
+
+
+
+  Widget _buildNewBox() {
+    return GestureDetector(
+      onTap: () => setState(() => _newBoxFocus.requestFocus()),
+      child: Container(
+        width: 330, // Adjust the width as needed
+        margin: const EdgeInsetsDirectional.fromSTEB(0, 12, 16, 0),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white, // Background color for the box
+          borderRadius: BorderRadius.circular(15), // Rounded corners
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Recommendations',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            TextField(
+              focusNode: _newBoxFocus,
+              controller: _newBoxController,
+              onSubmitted: (value) {
+                // Add your submission logic here
+              },
+              maxLines: null,
+              decoration: InputDecoration(
+                border: _newBoxFocus.hasFocus
+                    ? OutlineInputBorder()
+                    : InputBorder.none,
+                hintText: 'Tap to edit...',
+                suffixIcon:
+                    const Icon(Icons.edit, size: 20, color: Colors.grey),
+              ),
+              style: TextStyle(fontSize: 16),
+              cursorColor: Colors.blue,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
+
+
+
 
   void _showDialog(BuildContext context, String content, LabReportAndPatient? selectedReport) {
     showDialog(
