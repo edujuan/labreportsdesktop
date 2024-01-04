@@ -53,12 +53,20 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
     return BlocBuilder<SidebarBloc, SidebarState>(
         bloc: _sidebarBloc,
         builder: (sidebarContext, sidebarState) {
-          if (sidebarState.selectedLabReport != null) {
-            _updateExecutiveSummaryController(
-              sidebarState.selectedLabReport!.labReport.executiveSummary,
-              sidebarState.selectedLabReport!.labReport.recommendations,
+          if (sidebarState.selectedLabReport == null) {
+            return const Scaffold(
+              backgroundColor: Color(0xFFF1F4F8),
+              body: SafeArea(
+                child: Align(
+                    child: Text("Select a patient from the sidebar")
+                ),
+              ),
             );
           }
+          _updateExecutiveSummaryController(
+            sidebarState.selectedLabReport!.labReport.executiveSummary,
+            sidebarState.selectedLabReport!.labReport.recommendations,
+          );
           return BlocBuilder<DashboardBloc, DashboardState>(
               bloc: _bloc,
               builder: (dashboardContext, dashboardState) {

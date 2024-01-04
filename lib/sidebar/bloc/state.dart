@@ -25,7 +25,8 @@ final class SidebarState extends Equatable {
     List<LabReportAndPatient>? deniedLabReports,
     bool? showReportsInReview,
     int? selectedIndex,
-    LabReportAndPatient? selectedLabReport
+    LabReportAndPatient? selectedLabReport,
+    bool setSelectedLabReportNull = false
   }) {
     return SidebarState(
       status: status ?? this.status,
@@ -33,7 +34,7 @@ final class SidebarState extends Equatable {
       deniedLabReports: deniedLabReports ?? this.deniedLabReports,
       showReportsInReview: showReportsInReview ?? this.showReportsInReview,
       selectedIndex: selectedIndex ?? this.selectedIndex,
-      selectedLabReport: selectedLabReport ?? this.selectedLabReport,
+      selectedLabReport: setSelectedLabReportNull ? null : (selectedLabReport ?? this.selectedLabReport),
     );
   }
 

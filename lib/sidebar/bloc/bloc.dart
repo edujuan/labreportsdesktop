@@ -70,6 +70,7 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
           selectedLabReport: result.isNotEmpty ? result[0] : null,
           showReportsInReview: event.showReportsInReview,
           inReviewLabReports: result,
+          setSelectedLabReportNull: result.isEmpty
         ));
       } else {
         result = await _client.getDeniedReports();
@@ -79,6 +80,7 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
           selectedLabReport: result.isNotEmpty ? result[0] : null,
           showReportsInReview: event.showReportsInReview,
           deniedLabReports: result,
+          setSelectedLabReportNull: result.isEmpty
         ));
       }
     } catch (_) {
@@ -108,7 +110,8 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
       return emit(state.copyWith(
         selectedIndex: 0,
         selectedLabReport: inReviewLabReports.isNotEmpty ? inReviewLabReports[0] : null,
-        inReviewLabReports: inReviewLabReports
+        inReviewLabReports: inReviewLabReports,
+        setSelectedLabReportNull: inReviewLabReports.isEmpty
       ));
     } else {
       final deniedLabReports = state.deniedLabReports.toList();
@@ -117,7 +120,8 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
       return emit(state.copyWith(
           selectedIndex: 0,
           selectedLabReport: deniedLabReports.isNotEmpty ? deniedLabReports[0] : null,
-          deniedLabReports: deniedLabReports
+          deniedLabReports: deniedLabReports,
+          setSelectedLabReportNull: deniedLabReports.isEmpty
       ));
     }
   }
