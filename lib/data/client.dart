@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:lab4_doctors/data/models/reportEdit.dart';
 
 import 'models/models.dart';
 
@@ -18,7 +17,9 @@ class ApiClient {
   Future<List<LabReportAndPatient>> getReportsInReview() async {
     try {
       final response = await _request('/lab-reports/in-review/');
-      var reports = (response["list"] as List<dynamic>).map((reportJson) => LabReportAndPatient.fromJson(reportJson)).toList();
+      var reports = (response["list"] as List<dynamic>)
+          .map((reportJson) => LabReportAndPatient.fromJson(reportJson))
+          .toList();
       return reports;
     } catch (e) {
       print(e);
@@ -82,7 +83,8 @@ class ApiClient {
           birthDate: DateTime(1985, 5, 20).add(Duration(days: i * 365)),
           id: '',
         );
-        dummyData.add(LabReportAndPatient(labReport: labReport, patient: patient));
+        dummyData
+            .add(LabReportAndPatient(labReport: labReport, patient: patient));
       }
       return dummyData;
     }
@@ -91,7 +93,9 @@ class ApiClient {
   Future<List<LabReportAndPatient>> getDeniedReports() async {
     try {
       final response = await _request('/lab-reports/denied/');
-      var reports = (response["list"] as List<dynamic>).map((reportJson) => LabReportAndPatient.fromJson(reportJson)).toList();
+      var reports = (response["list"] as List<dynamic>)
+          .map((reportJson) => LabReportAndPatient.fromJson(reportJson))
+          .toList();
       return reports;
     } catch (e) {
       print(e);
@@ -155,15 +159,19 @@ class ApiClient {
           birthDate: DateTime(1985, 5, 20).add(Duration(days: i * 365)),
           id: '',
         );
-        dummyData.add(LabReportAndPatient(labReport: labReport, patient: patient));
+        dummyData
+            .add(LabReportAndPatient(labReport: labReport, patient: patient));
       }
       return dummyData;
     }
   }
 
-  Future<Report?> editReport(String id, String? summary, String? recommendation) async {
-    final response = await _request('/lab-reports/edit/$id', body: ReportEdit(
-        executiveSummary: summary, recommendations: recommendation).toJson());
+  Future<Report?> editReport(
+      String id, String? summary, String? recommendation) async {
+    final response = await _request('/lab-reports/edit/$id',
+        body: ReportEdit(
+                executiveSummary: summary, recommendations: recommendation)
+            .toJson());
     return Report.fromJson(response);
   }
 
@@ -172,22 +180,18 @@ class ApiClient {
   }
 
   Future<void> deny(String id, bool patientShouldSchedule) async {
-    await _request(
-        '/lab-reports/deny/$id',
+    await _request('/lab-reports/deny/$id',
         queryParams: {"patientShouldSchedule": "$patientShouldSchedule"},
-        shouldBePost: true
-    );
+        shouldBePost: true);
   }
 }
 
 /// HTTP request logic
 extension ApiClientX on ApiClient {
-  Future<Map<String, dynamic>> _request(
-    String endpoint, {
-    Map<String, String>? queryParams,
-    Map<String, dynamic>? body,
-    bool shouldBePost = false
-  }) async {
+  Future<Map<String, dynamic>> _request(String endpoint,
+      {Map<String, String>? queryParams,
+      Map<String, dynamic>? body,
+      bool shouldBePost = false}) async {
     Uri uri = _constructUrl(endpoint, queryParams: queryParams);
 
     http.Response response;
@@ -240,7 +244,7 @@ extension ApiClientX on ApiClient {
 
     try {
       var decoded = json.decode(response.body);
-      if(decoded is Map) {
+      if (decoded is Map) {
         body = decoded as Map<String, dynamic>;
       } else {
         body = {"list": decoded as List<dynamic>};

@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lab4_doctors/data/models/patientHistory.dart';
+
+import 'patient_history.dart';
 
 part 'patient.g.dart';
 
@@ -17,6 +18,7 @@ class Patient {
     required this.id,
   });
 
-  factory Patient.fromJson(Map<String, dynamic> json) => _$PatientFromJson(json);
+  factory Patient.fromJson(Map<String, dynamic> json) =>
+      _$PatientFromJson(json);
   Map<String, dynamic> toJson() => _$PatientToJson(this);
 }

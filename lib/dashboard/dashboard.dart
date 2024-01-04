@@ -1,21 +1,19 @@
-// import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import '../data/data.dart';
-import 'package:lab4_doctors/dashboard/bloc/bloc.dart';
-import 'package:lab4_doctors/sidebar/bloc/bloc.dart';
+import '../sidebar/bloc/bloc.dart';
+import 'bloc/bloc.dart';
 
-class Dashboard5Widget extends StatefulWidget {
-  const Dashboard5Widget({super.key});
+class DashboardWidget extends StatefulWidget {
+  const DashboardWidget({super.key});
 
   @override
-  _Dashboard5WidgetState createState() => _Dashboard5WidgetState();
+  State<DashboardWidget> createState() => _DashboardWidgetState();
 }
 
-class _Dashboard5WidgetState extends State<Dashboard5Widget>
+class _DashboardWidgetState extends State<DashboardWidget>
     with TickerProviderStateMixin {
   final TextEditingController _paragraphController = TextEditingController();
   final FocusNode _paragraphFocus = FocusNode();
@@ -34,7 +32,8 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
     _bloc = Provider.of<DashboardBloc>(context, listen: false);
   }
 
-  void _updateExecutiveSummaryController(String executiveSummary, String recommendations) {
+  void _updateExecutiveSummaryController(
+      String executiveSummary, String recommendations) {
     _paragraphController.text = executiveSummary;
     _newBoxController.text = recommendations;
   }
@@ -57,9 +56,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
             return const Scaffold(
               backgroundColor: Color(0xFFF1F4F8),
               body: SafeArea(
-                child: Align(
-                    child: Text("Select a patient from the sidebar")
-                ),
+                child: Align(child: Text("Select a patient from the sidebar")),
               ),
             );
           }
@@ -455,25 +452,20 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
   }
 
   void _updateSummary(LabReportAndPatient selectedReport, String value) {
-    _bloc.add(EditReportEvent(selectedReport.labReport.id,
-        summary: value));
+    _bloc.add(EditReportEvent(selectedReport.labReport.id, summary: value));
 
     final report = Report(
         id: selectedReport.labReport.id,
         name: selectedReport.labReport.name,
         reportDate: selectedReport.labReport.reportDate,
-        biomarkerValues:
-        selectedReport.labReport.biomarkerValues,
+        biomarkerValues: selectedReport.labReport.biomarkerValues,
         patientId: selectedReport.labReport.patientId,
         executiveSummary: value,
-        recommendations:
-        selectedReport.labReport.recommendations,
+        recommendations: selectedReport.labReport.recommendations,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);
-    _sidebarBloc.add(UpdateSelectedReportEvent(
-        LabReportAndPatient(
-            labReport: report,
-            patient: selectedReport.patient)));
+    _sidebarBloc.add(UpdateSelectedReportEvent(LabReportAndPatient(
+        labReport: report, patient: selectedReport.patient)));
   }
 
   Widget _buildParagraphBox(LabReportAndPatient selectedReport) {
@@ -506,7 +498,8 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
                 suffixIcon: IconButton(
                   icon: Icon(Icons.check, size: 20, color: Colors.grey),
                   onPressed: () {
-                    _updateSummary(selectedReport, _paragraphController.value.text);
+                    _updateSummary(
+                        selectedReport, _paragraphController.value.text);
                   },
                 ),
               ),
@@ -519,25 +512,23 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
     );
   }
 
-  void _updateRecommendations(LabReportAndPatient selectedReport, String value){
-    _bloc.add(EditReportEvent(selectedReport.labReport.id,
-        recommendation: value));
+  void _updateRecommendations(
+      LabReportAndPatient selectedReport, String value) {
+    _bloc.add(
+        EditReportEvent(selectedReport.labReport.id, recommendation: value));
 
     final report = Report(
         id: selectedReport.labReport.id,
         name: selectedReport.labReport.name,
         reportDate: selectedReport.labReport.reportDate,
-        biomarkerValues:
-        selectedReport.labReport.biomarkerValues,
+        biomarkerValues: selectedReport.labReport.biomarkerValues,
         patientId: selectedReport.labReport.patientId,
         executiveSummary: selectedReport.labReport.executiveSummary,
         recommendations: value,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);
-    _sidebarBloc.add(UpdateSelectedReportEvent(
-        LabReportAndPatient(
-            labReport: report,
-            patient: selectedReport.patient)));
+    _sidebarBloc.add(UpdateSelectedReportEvent(LabReportAndPatient(
+        labReport: report, patient: selectedReport.patient)));
   }
 
   Widget _buildNewBox(LabReportAndPatient selectedReport) {
@@ -560,7 +551,8 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
             TextField(
               focusNode: _newBoxFocus,
               controller: _newBoxController,
-              onSubmitted: (value) => _updateRecommendations(selectedReport, value),
+              onSubmitted: (value) =>
+                  _updateRecommendations(selectedReport, value),
               maxLines: null,
               decoration: InputDecoration(
                 border: _newBoxFocus.hasFocus
@@ -570,7 +562,8 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
                 suffixIcon: IconButton(
                   icon: Icon(Icons.check, size: 20, color: Colors.grey),
                   onPressed: () {
-                    _updateRecommendations(selectedReport, _newBoxController.value.text);
+                    _updateRecommendations(
+                        selectedReport, _newBoxController.value.text);
                   },
                 ),
               ),

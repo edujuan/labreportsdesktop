@@ -15,15 +15,15 @@ class Biomarker {
   final String rangeDescription;
 
   const Biomarker({
-  required this.id,
-  required this.name,
-  required this.bucket,
-  required this.value,
-  required this.minValue,
-  required this.maxValue,
-  required this.unit,
-  required this.biomarkerDescription,
-  required this.rangeDescription,
+    required this.id,
+    required this.name,
+    required this.bucket,
+    required this.value,
+    required this.minValue,
+    required this.maxValue,
+    required this.unit,
+    required this.biomarkerDescription,
+    required this.rangeDescription,
   });
 
   String getHealth() {
@@ -66,8 +66,6 @@ class Biomarker {
 
     return "Data not available"; // In case min and max are both null
   }
-
-
 
   factory Biomarker.fromJson(Map<String, dynamic> json) =>
       _$BiomarkerFromJson(json);

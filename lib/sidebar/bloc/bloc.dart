@@ -65,23 +65,21 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
       if (event.showReportsInReview) {
         result = await _client.getReportsInReview();
         return emit(state.copyWith(
-          status: SidebarStatus.success,
-          selectedIndex: 0,
-          selectedLabReport: result.isNotEmpty ? result[0] : null,
-          showReportsInReview: event.showReportsInReview,
-          inReviewLabReports: result,
-          setSelectedLabReportNull: result.isEmpty
-        ));
+            status: SidebarStatus.success,
+            selectedIndex: 0,
+            selectedLabReport: result.isNotEmpty ? result[0] : null,
+            showReportsInReview: event.showReportsInReview,
+            inReviewLabReports: result,
+            setSelectedLabReportNull: result.isEmpty));
       } else {
         result = await _client.getDeniedReports();
         return emit(state.copyWith(
-          status: SidebarStatus.success,
-          selectedIndex: 0,
-          selectedLabReport: result.isNotEmpty ? result[0] : null,
-          showReportsInReview: event.showReportsInReview,
-          deniedLabReports: result,
-          setSelectedLabReportNull: result.isEmpty
-        ));
+            status: SidebarStatus.success,
+            selectedIndex: 0,
+            selectedLabReport: result.isNotEmpty ? result[0] : null,
+            showReportsInReview: event.showReportsInReview,
+            deniedLabReports: result,
+            setSelectedLabReportNull: result.isEmpty));
       }
     } catch (_) {
       emit(state.copyWith(status: SidebarStatus.failure));
@@ -97,57 +95,56 @@ class SidebarBloc extends Bloc<SidebarEvent, SidebarState> {
   }
 
   Future<void> _onRemoveSelectedReport(
-      RemoveSelectedReport event,
-      Emitter<SidebarState> emit,
+    RemoveSelectedReport event,
+    Emitter<SidebarState> emit,
   ) async {
-    if(state.selectedLabReport == null) {
+    if (state.selectedLabReport == null) {
       return;
     }
-    if(state.showReportsInReview) {
+    if (state.showReportsInReview) {
       final inReviewLabReports = state.inReviewLabReports.toList();
       inReviewLabReports.removeAt(state.selectedIndex);
 
       return emit(state.copyWith(
-        selectedIndex: 0,
-        selectedLabReport: inReviewLabReports.isNotEmpty ? inReviewLabReports[0] : null,
-        inReviewLabReports: inReviewLabReports,
-        setSelectedLabReportNull: inReviewLabReports.isEmpty
-      ));
+          selectedIndex: 0,
+          selectedLabReport:
+              inReviewLabReports.isNotEmpty ? inReviewLabReports[0] : null,
+          inReviewLabReports: inReviewLabReports,
+          setSelectedLabReportNull: inReviewLabReports.isEmpty));
     } else {
       final deniedLabReports = state.deniedLabReports.toList();
       deniedLabReports.removeAt(state.selectedIndex);
 
       return emit(state.copyWith(
           selectedIndex: 0,
-          selectedLabReport: deniedLabReports.isNotEmpty ? deniedLabReports[0] : null,
+          selectedLabReport:
+              deniedLabReports.isNotEmpty ? deniedLabReports[0] : null,
           deniedLabReports: deniedLabReports,
-          setSelectedLabReportNull: deniedLabReports.isEmpty
-      ));
+          setSelectedLabReportNull: deniedLabReports.isEmpty));
     }
   }
 
   Future<void> _onUpdateSelectedReport(
-      UpdateSelectedReportEvent event,
-      Emitter<SidebarState> emit,
+    UpdateSelectedReportEvent event,
+    Emitter<SidebarState> emit,
   ) async {
-    if(state.showReportsInReview) {
+    if (state.showReportsInReview) {
       final inReviewLabReports = state.inReviewLabReports.toList();
-      final index = inReviewLabReports.indexOf(inReviewLabReports.singleWhere((element) => element.labReport.id == event.report.labReport.id));
+      final index = inReviewLabReports.indexOf(inReviewLabReports.singleWhere(
+          (element) => element.labReport.id == event.report.labReport.id));
       inReviewLabReports[index] = event.report;
 
       return emit(state.copyWith(
           selectedLabReport: event.report,
-          inReviewLabReports: inReviewLabReports
-      ));
+          inReviewLabReports: inReviewLabReports));
     } else {
       final deniedLabReports = state.inReviewLabReports.toList();
-      final index = deniedLabReports.indexOf(deniedLabReports.singleWhere((element) => element.labReport.id == event.report.labReport.id));
+      final index = deniedLabReports.indexOf(deniedLabReports.singleWhere(
+          (element) => element.labReport.id == event.report.labReport.id));
       deniedLabReports[index] = event.report;
 
       return emit(state.copyWith(
-          selectedLabReport: event.report,
-          deniedLabReports: deniedLabReports
-      ));
+          selectedLabReport: event.report, deniedLabReports: deniedLabReports));
     }
   }
 }

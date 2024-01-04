@@ -9,7 +9,7 @@ class Report {
   final String id;
   final String name;
   final String reportDate;
-  final Map<String,Biomarker> biomarkerValues;
+  final Map<String, Biomarker> biomarkerValues;
   final String patientId;
   final String executiveSummary;
   final String recommendations;
@@ -25,7 +25,7 @@ class Report {
     required this.executiveSummary,
     required this.recommendations,
     required this.doctorName,
-    required this.displayed
+    required this.displayed,
   });
 
   factory Report.fromJson(Map<String, dynamic> json) => _$ReportFromJson(json);
@@ -33,6 +33,5 @@ class Report {
   Map<String, dynamic> toJson() => _$ReportToJson(this);
 
   @override
-  String toString() =>
-      '$name $reportDate';
+  String toString() => '$name $reportDate';
 }

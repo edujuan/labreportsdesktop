@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:lab4_doctors/dashboard/bloc/bloc.dart';
-import 'package:lab4_doctors/sidebar/bloc/bloc.dart';
 import 'package:provider/provider.dart';
+
+import '../dashboard/bloc/bloc.dart';
 import '../data/data.dart';
+import '../sidebar/bloc/bloc.dart';
 
 class DependenciesScope extends StatefulWidget {
   final Widget child;
@@ -32,7 +33,8 @@ class _DependenciesScopeState extends State<DependenciesScope> {
     );
 
     _dashboardBloc = DashboardBloc(client: _client);
-    _sidebarBloc = SidebarBloc(client: _client)..add(FetchReportsInReviewEvent());
+    _sidebarBloc = SidebarBloc(client: _client)
+      ..add(FetchReportsInReviewEvent());
 
     // Mock Data
     _user = const User(

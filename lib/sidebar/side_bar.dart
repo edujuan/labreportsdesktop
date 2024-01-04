@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lab4_doctors/sidebar/bloc/bloc.dart';
 import 'package:provider/provider.dart';
+
 import '../data/data.dart';
+import 'bloc/bloc.dart';
 
 class SidebarWidget extends StatefulWidget {
   const SidebarWidget({super.key});
 
   @override
-  _SidebarWidgetState createState() => _SidebarWidgetState();
+  State<SidebarWidget> createState() => _SidebarWidgetState();
 }
 
 class _SidebarWidgetState extends State<SidebarWidget> {
@@ -24,42 +25,45 @@ class _SidebarWidgetState extends State<SidebarWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SidebarBloc, SidebarState>(
-        bloc: _bloc,
-        builder: (context, state) {
-          if (state.status == SidebarStatus.failure) {
-            return const SizedBox(width: 200, child: Text("Error..."));
-          }
-          if (state.status == SidebarStatus.initial) {
-            return const SizedBox(width: 200, child: Text("Loading..."));
-          }
+      bloc: _bloc,
+      builder: (context, state) {
+        if (state.status == SidebarStatus.failure) {
+          return const SizedBox(width: 200, child: Text("Error..."));
+        }
+        if (state.status == SidebarStatus.initial) {
+          return const SizedBox(width: 200, child: Text("Loading..."));
+        }
 
-          List<LabReportAndPatient> displayList = state.showReportsInReview
-              ? state.inReviewLabReports
-              : state.deniedLabReports;
-          
-          return Container(
-            constraints: BoxConstraints(minWidth: 230), // Set minimum width here
-            child: Column(         
+        List<LabReportAndPatient> displayList = state.showReportsInReview
+            ? state.inReviewLabReports
+            : state.deniedLabReports;
+
+        return Container(
+          constraints: BoxConstraints(minWidth: 230), // Set minimum width here
+          child: Column(
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: ToggleButtons(
-                isSelected: [state.showReportsInReview, !state.showReportsInReview],
-                onPressed: (int index) {
-                  _bloc.add(SwitchReportTabEvent(index == 0));
-                },
-                borderRadius: BorderRadius.circular(10),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('In Review'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Denied'),
-                  ),
-                ],
-              ),
+                  isSelected: [
+                    state.showReportsInReview,
+                    !state.showReportsInReview
+                  ],
+                  onPressed: (int index) {
+                    _bloc.add(SwitchReportTabEvent(index == 0));
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('In Review'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('Denied'),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: displayList.length < 2

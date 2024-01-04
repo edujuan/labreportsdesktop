@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:lab4_doctors/core/dependencies.dart';
-import 'package:lab4_doctors/dashboard/dashboard.dart';
-import 'package:lab4_doctors/sidebar/side_bar.dart';
-import 'data/data.dart';
 
-void main() {
-  runApp(MyApp());
+import 'core/dependencies.dart';
+import 'dashboard/dashboard.dart';
+import 'sidebar/side_bar.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(const App());
 }
 
-class MyApp extends StatefulWidget {
-
-
-  MyApp({super.key}); 
+class App extends StatefulWidget {
+  const App({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<App> createState() => _AppState();
 }
 
-class _MyAppState extends State<MyApp> {
-
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return const DependenciesScope(
       child: MaterialApp(
-          title: 'Health Report',
-          home: Scaffold(
-          
-            body: Row(
-              children: [
-                SidebarWidget(),
-                Expanded(child: Dashboard5Widget()),
-              ],
-            ),),        
+        title: 'Health Report',
+        home: Scaffold(
+          body: Row(
+            children: [
+              SidebarWidget(),
+              Expanded(child: DashboardWidget()),
+            ],
+          ),
+        ),
       ),
     );
   }
