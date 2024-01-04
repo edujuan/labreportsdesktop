@@ -224,7 +224,7 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
             Expanded(child: _buildBiomarkersSection(selectedReport)),
           ] +
           (selectedReport != null
-              ? [_buildParagraphBox(selectedReport.labReport)]
+              ? [_buildParagraphBox(selectedReport)]
               : <Widget>[]),
     );
   }
@@ -391,7 +391,7 @@ Widget _buildBiomarkerRow(
     );
   }
 
-  Widget _buildParagraphBox(Report selectedReport) {
+  Widget _buildParagraphBox(LabReportAndPatient selectedReport) {
     return GestureDetector(
       onTap: () => setState(() => _paragraphFocus.requestFocus()),
       child: Container(
@@ -412,7 +412,7 @@ Widget _buildBiomarkerRow(
               focusNode: _paragraphFocus,
               controller: _paragraphController,
               onSubmitted: (value) =>
-                  _bloc.add(EditReportEvent(selectedReport.id, summary: value)),
+                  _bloc.add(EditReportEvent(selectedReport.labReport.id, summary: value)),
               maxLines: null,
               decoration: InputDecoration(
                 border: _paragraphFocus.hasFocus
@@ -420,7 +420,26 @@ Widget _buildBiomarkerRow(
                     : InputBorder.none,
                 hintText: 'Tap to edit summary...',
                 suffixIcon:
-                    const Icon(Icons.edit, size: 20, color: Colors.grey),
+                IconButton(
+                      icon: Icon(Icons.check, size: 20, color: Colors.grey),
+                      onPressed: () { 
+                        print("Pressed submit");
+                        _bloc.add(EditReportEvent(selectedReport.labReport.id, summary: _paragraphController.value.text));
+
+                        final report = Report(
+                            id: selectedReport.labReport.id,
+                            name: selectedReport.labReport.name,
+                            reportDate: selectedReport.labReport.reportDate,
+                            biomarkerValues: selectedReport.labReport.biomarkerValues,
+                            patientId: selectedReport.labReport.patientId,
+                            executiveSummary: _paragraphController.value.text,
+                            recommendations: selectedReport.labReport.recommendations,
+                            doctorName: selectedReport.labReport.doctorName,
+                            displayed: selectedReport.labReport.displayed
+                        );
+                        _sidebarBloc.add(UpdateSelectedReportEvent(LabReportAndPatient(labReport: report, patient: selectedReport.patient)));
+                        },
+                    ),
               ),
               style: TextStyle(fontSize: 16),
               cursorColor: Colors.blue,

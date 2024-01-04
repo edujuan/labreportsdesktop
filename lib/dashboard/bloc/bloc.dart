@@ -29,6 +29,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     Emitter<DashboardState> emit,
   ) async {
     try {
+      print("Report edited");
       await _client.editReport(event.id, event.summary, event.recommendation);
       print("Report edited");
 

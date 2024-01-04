@@ -22,4 +22,10 @@ final class SelectReportEvent extends SidebarEvent {
   SelectReportEvent(this.index, this.report);
 }
 
+final class UpdateSelectedReportEvent extends SidebarEvent {
+  final LabReportAndPatient report;
+
+  UpdateSelectedReportEvent(this.report);
+}
+
 final class RemoveSelectedReport extends SidebarEvent {}

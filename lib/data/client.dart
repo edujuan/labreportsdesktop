@@ -162,7 +162,7 @@ class ApiClient {
   }
 
   Future<Report?> editReport(String id, String? summary, String? recommendation) async {
-    final response = await _request('/lab-reports/$id', body: ReportEdit(
+    final response = await _request('/lab-reports/edit/$id', body: ReportEdit(
         executiveSummary: summary, recommendations: recommendation).toJson());
     return Report.fromJson(response);
   }
@@ -206,8 +206,9 @@ extension ApiClientX on ApiClient {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8'
           },
-          body: body,
+          body: jsonEncode(body),
         );
+        print(response);
       }
 
       if (response.statusCode != 200) {
