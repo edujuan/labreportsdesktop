@@ -64,6 +64,7 @@ class _SidebarWidgetState extends State<SidebarWidget> {
               Expanded(
                 child: displayList.length < 2
                     ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: displayList
                             .map(
                               (e) => buildNavigationDestination(
