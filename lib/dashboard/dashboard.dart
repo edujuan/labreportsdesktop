@@ -231,9 +231,10 @@ class _Dashboard5WidgetState extends State<Dashboard5Widget>
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
     var labandpatient = selectedReport;
     return _buildSectionContainer(
-      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 179, minimumRange: 100)).toList(),
+      children: labandpatient.labReport.biomarkerValues.values.map((biomarker) => _buildBiomarkerRow(biomarker.name, biomarker.value.toString(), 300, minimumRange: 100, maximumRange: 300)).toList(),
     );
   }
+
 
 Widget _buildBiomarkerRow(
   String title, 
@@ -244,55 +245,65 @@ Widget _buildBiomarkerRow(
 }) {
   const double rangeSize = 120;
   
-  double greenContainerWidth = 70;
-  Alignment greenContainerAlignment = Alignment.center;
+  double greenContainerWidth = rangeSize*0.75;
+  double greenStart = (1-(greenContainerWidth/rangeSize))*rangeSize;
+  double expansionRation = 1.1;
+
+
+  // Alignment greenContainerAlignment = Alignment.center;      
+  Offset offsetValue = Offset(0,0);
   double lineLeftPosition;
 
   if (minimumRange != null && maximumRange != null) {
     // Both ranges are provided
-    greenContainerWidth = 70; // Or any other width you desire
-    greenContainerAlignment = Alignment.center;
+    greenContainerWidth = greenContainerWidth; // Or any other width you desire
+    offsetValue = Offset(0,0);
 
-      if (valuePosition>minimumRange && valuePosition<maximumRange) {
+      if (valuePosition>minimumRange && valuePosition<=maximumRange) {
         lineLeftPosition = rangeSize / 2 + (greenContainerWidth / (maximumRange - minimumRange)) * (valuePosition - (minimumRange + maximumRange) / 2);
       } else if (valuePosition<minimumRange) {
-        lineLeftPosition = 17.5;
+        lineLeftPosition = ((1-(greenContainerWidth/rangeSize))/3)*rangeSize;
       } else if (valuePosition>maximumRange) {
-        lineLeftPosition = 107.5;
+        lineLeftPosition = (1-((1-(greenContainerWidth/rangeSize))/3))*rangeSize;
       } else {
         lineLeftPosition = rangeSize / 2; // Default initialization
       }
 
   } else if (minimumRange != null) {
     // Only minimumRange is provided
-    greenContainerWidth = 90;
-    greenContainerAlignment = Alignment.centerRight;
+    greenContainerWidth = greenContainerWidth*expansionRation;
+    greenStart = (1-(greenContainerWidth/rangeSize))*rangeSize;
+    // greenContainerAlignment = Alignment.centerRight;
+    offsetValue = Offset(10,0);
+
 
     if (valuePosition>=minimumRange && valuePosition<minimumRange*1.8) {
-        lineLeftPosition = 30+greenContainerWidth*((valuePosition-minimumRange)/(minimumRange));
+        lineLeftPosition = greenStart+greenContainerWidth*((valuePosition-minimumRange)/(minimumRange));
       } else if (valuePosition>=minimumRange*1.8) {
-        lineLeftPosition = 112; 
+        lineLeftPosition = rangeSize*0.95; 
       }  else {
-        lineLeftPosition = 17.5;
+        lineLeftPosition = ((1-(greenContainerWidth/rangeSize))/2)*rangeSize;
       } 
 
   } else if (maximumRange != null) {
     // Only maximumRange is provided
-    greenContainerWidth = 90;
-    greenContainerAlignment = Alignment.centerLeft;
+    greenContainerWidth = greenContainerWidth*expansionRation;
+    offsetValue = Offset(-10,0);
 
     if (valuePosition<=maximumRange) {
         lineLeftPosition = greenContainerWidth*(valuePosition/maximumRange);
       } else {
-        lineLeftPosition = 107.5;
+        lineLeftPosition = (1-((1-(greenContainerWidth/rangeSize))/2))*rangeSize;
       } 
 
   } else {
     // Neither range is provided
-    greenContainerWidth = 70; // Default width when no ranges are given
-    greenContainerAlignment = Alignment.center;
+    greenContainerWidth = greenContainerWidth; // Default width when no ranges are given
+    // greenContainerAlignment = Alignment.center;
+    offsetValue = Offset(0,0);
     lineLeftPosition = rangeSize / 2; // Center the line as a default position
   }
+
 
   return Padding(
     padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
@@ -308,20 +319,54 @@ Widget _buildBiomarkerRow(
             Expanded(child: Text(value)),
             SizedBox(
               width: rangeSize,
+              height: 40, // Increased height to accommodate labels at the bottom
               child: Stack(
-                alignment: Alignment.center,
+                alignment: Alignment.topCenter,
                 clipBehavior: Clip.none,
                 children: [
-                  Container(width: 300, height: 10, decoration: BoxDecoration(color: const Color.fromARGB(255, 221, 221, 221), borderRadius: BorderRadius.circular(10))),
-                  Align(
-                    alignment: greenContainerAlignment,
-                    child: Container(width: greenContainerWidth, height: 10, decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10))),
+                  // Grey background container
+                  Container(
+                    width: rangeSize,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 221, 221, 221),
+                      borderRadius: BorderRadius.circular(10)),
                   ),
+                  // Green range container
+                  Transform.translate(
+                    offset: offsetValue,
+                    child: Container(
+                      width: greenContainerWidth,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  ),
+                  // Black line indicator
                   Positioned(
                     left: lineLeftPosition,
                     top: -3,
-                    child: Container(width: 2, height: 16, color: Colors.black),
+                    child: Container(
+                      width: 2,
+                      height: 16,
+                      color: Colors.black),
                   ),
+                  // Conditionally add labels at the bottom
+                  if (minimumRange != null)
+                    Positioned(
+                      left: 10, // Adjust as needed
+                      top: 15,
+                      bottom: 0,
+                      child: Text(minimumRange.toString(), style: TextStyle(fontSize: 12)),
+                    ),
+                  if (maximumRange != null)
+                    Positioned(
+                      right: 10, // Adjust as needed
+                      top: 15,
+                      bottom: 0,
+                      child: Text(maximumRange.toString(), style: TextStyle(fontSize: 12)),
+                    ),
                 ],
               ),
             ),
@@ -331,7 +376,6 @@ Widget _buildBiomarkerRow(
     )
   );
 }
-
 
   BoxDecoration _sectionDecoration() {
     return BoxDecoration(
