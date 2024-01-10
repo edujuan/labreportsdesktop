@@ -29,7 +29,7 @@ class ApiClient {
         var labReport = Report(
           id: 'lab-report-id-$i',
           name: 'Blood test $i',
-          reportDate: DateTime.now().toString(),
+          reportDate: DateTime.now(),
           // Assuming you have a Map<String, Biomarker> for biomarkerValues
           biomarkerValues: <String, Biomarker>{
             "Test 1": const Biomarker(
@@ -105,7 +105,7 @@ class ApiClient {
         var labReport = Report(
           id: 'lab-report-id-$i',
           name: 'Blood test $i',
-          reportDate: DateTime.now().toString(),
+          reportDate: DateTime.now(),
           // Assuming you have a Map<String, Biomarker> for biomarkerValues
           biomarkerValues: <String, Biomarker>{
             "Test 1": const Biomarker(

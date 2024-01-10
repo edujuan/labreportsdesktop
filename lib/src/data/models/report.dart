@@ -8,7 +8,7 @@ part 'report.g.dart';
 class Report {
   final String id;
   final String name;
-  final String reportDate;
+  final DateTime reportDate;
   final Map<String, Biomarker> biomarkerValues;
   final String patientId;
   final String executiveSummary;

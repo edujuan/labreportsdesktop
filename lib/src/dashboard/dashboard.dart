@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../data/data.dart';
 import '../sidebar/bloc/bloc.dart';
 import 'bloc/bloc.dart';
+import 'widgets/widgets.dart';
 
 class DashboardWidget extends StatefulWidget {
   const DashboardWidget({super.key});
@@ -15,13 +16,12 @@ class DashboardWidget extends StatefulWidget {
 
 class _DashboardWidgetState extends State<DashboardWidget>
     with TickerProviderStateMixin {
-  final TextEditingController _paragraphController = TextEditingController();
-  final FocusNode _paragraphFocus = FocusNode();
-
   late final SidebarBloc _sidebarBloc;
   late final DashboardBloc _bloc;
 
+  final TextEditingController _paragraphController = TextEditingController();
   final TextEditingController _newBoxController = TextEditingController();
+  final FocusNode _paragraphFocus = FocusNode();
   final FocusNode _newBoxFocus = FocusNode();
 
   @override
@@ -33,7 +33,9 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   void _updateExecutiveSummaryController(
-      String executiveSummary, String recommendations) {
+    String executiveSummary,
+    String recommendations,
+  ) {
     _paragraphController.text = executiveSummary;
     _newBoxController.text = recommendations;
   }
@@ -50,148 +52,50 @@ class _DashboardWidgetState extends State<DashboardWidget>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SidebarBloc, SidebarState>(
-        bloc: _sidebarBloc,
-        builder: (sidebarContext, sidebarState) {
-          if (sidebarState.selectedLabReport == null) {
-            return const Scaffold(
-              backgroundColor: Color(0xFFF1F4F8),
-              body: SafeArea(
-                child: Align(child: Text("Select a patient from the sidebar")),
+      bloc: _sidebarBloc,
+      builder: (sidebarContext, sidebarState) {
+        if (sidebarState.selectedLabReport == null) {
+          return const Scaffold(
+            backgroundColor: Color(0xFFF1F4F8),
+            body: SafeArea(
+              child: Align(child: Text("Select a patient from the sidebar")),
+            ),
+          );
+        }
+
+        _updateExecutiveSummaryController(
+          sidebarState.selectedLabReport!.labReport.executiveSummary,
+          sidebarState.selectedLabReport!.labReport.recommendations,
+        );
+
+        return BlocBuilder<DashboardBloc, DashboardState>(
+          bloc: _bloc,
+          builder: (dashboardContext, dashboardState) {
+            final selectedReport = sidebarState.selectedLabReport;
+
+            return Scaffold(
+              backgroundColor: const Color(0xFFF1F4F8),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Header(report: selectedReport!),
+                    _buildPatientProfileSection(selectedReport),
+                    _buildEditableSummarySection(selectedReport),
+                    const SizedBox(height: 50),
+                  ],
+                ),
               ),
             );
-          }
-          _updateExecutiveSummaryController(
-            sidebarState.selectedLabReport!.labReport.executiveSummary,
-            sidebarState.selectedLabReport!.labReport.recommendations,
-          );
-          return BlocBuilder<DashboardBloc, DashboardState>(
-              bloc: _bloc,
-              builder: (dashboardContext, dashboardState) {
-                return Scaffold(
-                  backgroundColor: const Color(0xFFF1F4F8),
-                  body: SafeArea(
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: _buildDashboardContent(
-                                sidebarState.selectedLabReport))
-                      ],
-                    ),
-                  ),
-                );
-              });
-        });
-  }
-
-  Widget _buildDashboardContent(LabReportAndPatient? selectedReport) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildHeader(selectedReport),
-          _buildPatientProfileSection(selectedReport),
-          _buildEditableSummarySection(selectedReport),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(LabReportAndPatient? selectedReport) {
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: _sectionDecoration(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildHeaderText(selectedReport),
-          _buildProfileCards(selectedReport),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderText(LabReportAndPatient? selectedReport) {
-    String headerText = selectedReport?.patient.name ?? 'Select a patient';
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
-        child: Text(headerText,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
-  Widget _buildProfileCards(LabReportAndPatient? selectedReport) {
-    return Expanded(
-      child: SizedBox(
-        height: 55,
-        child: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: 3,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) =>
-              _buildProfileCard(index, selectedReport),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard(int index, LabReportAndPatient? selectedReport) {
-    IconData iconData;
-    String dialogContent;
-    switch (index) {
-      case 0:
-        iconData = Icons.edit;
-        dialogContent = 'Edit functionality goes here';
-        break;
-      case 1:
-        iconData = Icons.close;
-        dialogContent = 'Notify patient to schedule an appointment?';
-        break;
-      case 2:
-        iconData = Icons.check;
-        dialogContent = 'Check functionality goes here';
-        break;
-      default:
-        iconData = Icons.help;
-        dialogContent = 'Default action';
-    }
-    return _profileCardContainer(
-        iconData, dialogContent, index == 1, selectedReport);
-  }
-
-  Widget _profileCardContainer(IconData icon, String content, bool showDialog,
-      LabReportAndPatient? selectedReport) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 8, 8),
-      child: GestureDetector(
-        onTap: () => {
-          if (showDialog)
-            {_showDialog(context, content, selectedReport)}
-          else if (icon == Icons.check && selectedReport != null)
-            {
-              _bloc.add(ApproveReportEvent(selectedReport.labReport.id)),
-              _sidebarBloc.add(RemoveSelectedReport())
-            }
-        },
-        child: Container(
-          width: 95,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: const Color(0xFFE0E3E7), width: 2),
-          ),
-          child: Center(child: Icon(icon, color: Colors.black)),
-        ),
-      ),
+          },
+        );
+      },
     );
   }
 
   Widget _buildPatientProfileSection(LabReportAndPatient? selectedReport) {
     return _buildSectionContainer(
         children: selectedReport == null
-            ? [Text('No patient selected')]
+            ? const [Text('No patient selected')]
             : _buildPatientDetails(selectedReport));
   }
 
@@ -360,88 +264,100 @@ class _DashboardWidgetState extends State<DashboardWidget>
     }
 
     return Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-        child: Container(
-          width: double.infinity,
-          decoration: _sectionDecoration(),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 2),
-            child: Row(
-              children: [
-                SizedBox(
-                    height: 100,
-                    child: VerticalDivider(
-                        width: 24,
-                        thickness: 4,
-                        indent: 12,
-                        endIndent: 12,
-                        color: lineColor)),
-                Expanded(
-                    child: Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 12, 16, 12),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [Text(title)]))),
-                Expanded(child: Text(value)),
-                SizedBox(
-                  width: rangeSize,
-                  height:
-                      40, // Increased height to accommodate labels at the bottom
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    clipBehavior: Clip.none,
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+      child: Container(
+        width: double.infinity,
+        decoration: _sectionDecoration(),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 2),
+          child: Row(
+            children: [
+              SizedBox(
+                height: 100,
+                child: VerticalDivider(
+                  width: 24,
+                  thickness: 4,
+                  indent: 12,
+                  endIndent: 12,
+                  color: lineColor,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 12, 16, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Grey background container
-                      Container(
-                        width: rangeSize,
-                        height: 10,
-                        decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 221, 221, 221),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      // Green range container
-                      Transform.translate(
-                        offset: offsetValue,
-                        child: Container(
-                          width: greenContainerWidth,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                      // Black line indicator
-                      Positioned(
-                        left: lineLeftPosition,
-                        top: -3,
-                        child: Container(
-                            width: 2, height: 16, color: Colors.black),
-                      ),
-                      // Conditionally add labels at the bottom
-                      if (minimumRange != null)
-                        Positioned(
-                          left: 10, // Adjust as needed
-                          top: 15,
-                          bottom: 0,
-                          child: Text(minimumRange.toString(),
-                              style: TextStyle(fontSize: 12)),
-                        ),
-                      if (maximumRange != null)
-                        Positioned(
-                          right: 10, // Adjust as needed
-                          top: 15,
-                          bottom: 0,
-                          child: Text(maximumRange.toString(),
-                              style: TextStyle(fontSize: 12)),
-                        ),
+                      Text(title),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: Text(value),
+              ),
+              SizedBox(
+                width: rangeSize,
+                height: 40,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: rangeSize,
+                      height: 10,
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 221, 221, 221),
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    // Green range container
+                    Transform.translate(
+                      offset: offsetValue,
+                      child: Container(
+                        width: greenContainerWidth,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    // Black line indicator
+                    Positioned(
+                      left: lineLeftPosition,
+                      top: -3,
+                      child:
+                          Container(width: 2, height: 16, color: Colors.black),
+                    ),
+                    // Conditionally add labels at the bottom
+                    if (minimumRange != null)
+                      Positioned(
+                        left: 10, // Adjust as needed
+                        top: 15,
+                        bottom: 0,
+                        child: Text(
+                          minimumRange.toString(),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    if (maximumRange != null)
+                      Positioned(
+                        right: 10, // Adjust as needed
+                        top: 15,
+                        bottom: 0,
+                        child: Text(
+                          maximumRange.toString(),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   BoxDecoration _sectionDecoration() {
@@ -464,8 +380,11 @@ class _DashboardWidgetState extends State<DashboardWidget>
         recommendations: selectedReport.labReport.recommendations,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);
-    _sidebarBloc.add(UpdateSelectedReportEvent(LabReportAndPatient(
-        labReport: report, patient: selectedReport.patient)));
+    _sidebarBloc.add(
+      UpdateSelectedReportEvent(
+        LabReportAndPatient(labReport: report, patient: selectedReport.patient),
+      ),
+    );
   }
 
   Widget _buildParagraphBox(LabReportAndPatient selectedReport) {
@@ -482,8 +401,10 @@ class _DashboardWidgetState extends State<DashboardWidget>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Summary Title',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Summary Title',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             TextField(
               focusNode: _paragraphFocus,
@@ -491,19 +412,17 @@ class _DashboardWidgetState extends State<DashboardWidget>
               onSubmitted: (value) => _updateSummary(selectedReport, value),
               maxLines: null,
               decoration: InputDecoration(
-                border: _paragraphFocus.hasFocus
-                    ? OutlineInputBorder()
-                    : InputBorder.none,
+                border: InputBorder.none,
                 hintText: 'Tap to edit summary...',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.check, size: 20, color: Colors.grey),
+                  icon: const Icon(Icons.check, size: 20, color: Colors.grey),
                   onPressed: () {
                     _updateSummary(
                         selectedReport, _paragraphController.value.text);
                   },
                 ),
               ),
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
               cursorColor: Colors.blue,
             ),
           ],
@@ -513,9 +432,12 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   void _updateRecommendations(
-      LabReportAndPatient selectedReport, String value) {
+    LabReportAndPatient selectedReport,
+    String value,
+  ) {
     _bloc.add(
-        EditReportEvent(selectedReport.labReport.id, recommendation: value));
+      EditReportEvent(selectedReport.labReport.id, recommendation: value),
+    );
 
     final report = Report(
         id: selectedReport.labReport.id,
@@ -527,8 +449,11 @@ class _DashboardWidgetState extends State<DashboardWidget>
         recommendations: value,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);
-    _sidebarBloc.add(UpdateSelectedReportEvent(LabReportAndPatient(
-        labReport: report, patient: selectedReport.patient)));
+    _sidebarBloc.add(
+      UpdateSelectedReportEvent(
+        LabReportAndPatient(labReport: report, patient: selectedReport.patient),
+      ),
+    );
   }
 
   Widget _buildNewBox(LabReportAndPatient selectedReport) {
@@ -555,9 +480,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                   _updateRecommendations(selectedReport, value),
               maxLines: null,
               decoration: InputDecoration(
-                border: _newBoxFocus.hasFocus
-                    ? OutlineInputBorder()
-                    : InputBorder.none,
+                border: InputBorder.none,
                 hintText: 'Tap to edit...',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.check, size: 20, color: Colors.grey),
@@ -573,43 +496,6 @@ class _DashboardWidgetState extends State<DashboardWidget>
           ],
         ),
       ),
-    );
-  }
-
-  void _showDialog(BuildContext context, String content,
-      LabReportAndPatient? selectedReport) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Action Required'),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-                child: const Text('No'),
-                onPressed: () => {
-                      if (selectedReport != null)
-                        {
-                          _bloc.add(DenyReportEvent(
-                              selectedReport.labReport.id, false)),
-                          _sidebarBloc.add(RemoveSelectedReport())
-                        },
-                      Navigator.of(context).pop()
-                    }),
-            TextButton(
-                child: const Text('Yes'),
-                onPressed: () => {
-                      if (selectedReport != null)
-                        {
-                          _bloc.add(DenyReportEvent(
-                              selectedReport.labReport.id, true)),
-                          _sidebarBloc.add(RemoveSelectedReport())
-                        },
-                      Navigator.of(context).pop()
-                    }),
-          ],
-        );
-      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/data.dart';
 import 'bloc/bloc.dart';
+import 'widgets/widgets.dart';
 
 class SidebarWidget extends StatefulWidget {
   const SidebarWidget({super.key});
@@ -18,7 +19,6 @@ class _SidebarWidgetState extends State<SidebarWidget> {
   @override
   void initState() {
     super.initState();
-
     _bloc = Provider.of<SidebarBloc>(context, listen: false);
   }
 
@@ -38,108 +38,39 @@ class _SidebarWidgetState extends State<SidebarWidget> {
             ? state.inReviewLabReports
             : state.deniedLabReports;
 
-        return Container(
-          constraints: BoxConstraints(minWidth: 230), // Set minimum width here
+        return ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: 250,
+            maxWidth: 250,
+          ),
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 15),
-                child: ToggleButtons(
-                  isSelected: [
-                    state.showReportsInReview,
-                    !state.showReportsInReview
-                  ],
-                  onPressed: (int index) {
-                    _bloc.add(SwitchReportTabEvent(index == 0));
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('In Review'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Denied'),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: displayList.length < 2
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: displayList
-                            .map(
-                              (e) => buildNavigationDestination(
-                                  e.patient.name,
-                                  e.labReport.reportDate.toString(),
-                                  "All Healthy",
-                                  0,
-                                  0),
-                            )
-                            .toList(),
-                      )
-                    : NavigationRail(
-                        selectedIndex: state.selectedIndex,
-                        onDestinationSelected: (int index) {
+              Toggles(state),
+              const SizedBox(height: 20),
+              if (displayList.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: displayList.length,
+                    itemBuilder: (context, index) {
+                      final e = displayList[index];
+                      return SidebarItem(
+                        onTap: () {
                           _bloc.add(
                               SelectReportEvent(index, displayList[index]));
                         },
-                        labelType: NavigationRailLabelType.all,
-                        destinations: displayList
-                            .map(
-                              (e) => NavigationRailDestination(
-                                  icon: buildNavigationDestination(
-                                      e.patient.name,
-                                      e.labReport.reportDate.toString(),
-                                      "All Healthy",
-                                      displayList.indexOf(e),
-                                      state.selectedIndex),
-                                  label: const SizedBox()),
-                            )
-                            .toList(),
-                      ),
-              ),
+                        isSelected: state.selectedIndex == index,
+                        name: e.patient.name,
+                        birthDate: e.patient.birthDate,
+                        date: e.labReport.reportDate,
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         );
       },
-    );
-  }
-
-  Widget buildNavigationDestination(
-      String name, String date, String results, int index, int selectedIndex) {
-    bool isSelected = selectedIndex == index;
-
-    return Card(
-      color: isSelected ? Colors.black : Colors.white,
-      elevation: 4,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          children: [
-            Icon(Icons.person_outline,
-                color: isSelected ? Colors.white : Colors.black),
-            SizedBox(width: 8),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Name: $name',
-                    style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black)),
-                Text('Date: $date',
-                    style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black)),
-                Text('Results: $results',
-                    style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black)),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -9,7 +9,7 @@ part of 'report.dart';
 Report _$ReportFromJson(Map<String, dynamic> json) => Report(
       id: json['id'] as String,
       name: json['name'] as String,
-      reportDate: json['reportDate'] as String,
+      reportDate: DateTime.parse(json['reportDate'] as String),
       biomarkerValues: (json['biomarkerValues'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, Biomarker.fromJson(e as Map<String, dynamic>)),
       ),
@@ -23,7 +23,7 @@ Report _$ReportFromJson(Map<String, dynamic> json) => Report(
 Map<String, dynamic> _$ReportToJson(Report instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'reportDate': instance.reportDate,
+      'reportDate': instance.reportDate.toIso8601String(),
       'biomarkerValues': instance.biomarkerValues,
       'patientId': instance.patientId,
       'executiveSummary': instance.executiveSummary,
