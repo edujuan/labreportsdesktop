@@ -60,9 +60,12 @@ class _HeaderState extends State<Header> {
       builder: (context, state) {
         final isInReviewState = state.showReportsInReview;
 
+        final patient = widget.report.patient;
+
+        final info =
+            'Name: ${patient.name}\nBirth Date: ${patient.birthDate.day}/${patient.birthDate.month}/${patient.birthDate.year}\nPhone Number: ${patient.phoneNumber}\nWeight: ${patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.history?.height ?? 'Unknown'}cm';
+
         return Container(
-          width: double.infinity,
-          height: 140,
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,9 +73,22 @@ class _HeaderState extends State<Header> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
-                  child: Text(
-                    name,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Text(
+                        name,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Patient Profile',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(info),
+                      const SizedBox(height: 10),
+                    ],
                   ),
                 ),
               ),

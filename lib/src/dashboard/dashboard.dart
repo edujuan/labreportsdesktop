@@ -54,7 +54,9 @@ class _DashboardWidgetState extends State<DashboardWidget>
     return BlocBuilder<SidebarBloc, SidebarState>(
       bloc: _sidebarBloc,
       builder: (sidebarContext, sidebarState) {
-        if (sidebarState.selectedLabReport == null) {
+        final selectedReport = sidebarState.selectedLabReport;
+
+        if (selectedReport == null) {
           return const Scaffold(
             backgroundColor: Color(0xFFF1F4F8),
             body: SafeArea(
@@ -64,23 +66,21 @@ class _DashboardWidgetState extends State<DashboardWidget>
         }
 
         _updateExecutiveSummaryController(
-          sidebarState.selectedLabReport!.labReport.executiveSummary,
-          sidebarState.selectedLabReport!.labReport.recommendations,
+          selectedReport.labReport.executiveSummary,
+          selectedReport.labReport.recommendations,
         );
 
         return BlocBuilder<DashboardBloc, DashboardState>(
           bloc: _bloc,
           builder: (dashboardContext, dashboardState) {
-            final selectedReport = sidebarState.selectedLabReport;
-
             return Scaffold(
               backgroundColor: const Color(0xFFF1F4F8),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Header(report: selectedReport!),
-                    _buildPatientProfileSection(selectedReport),
-                    _buildEditableSummarySection(selectedReport),
+                    Header(report: selectedReport),
+                    PatientSection(patient: selectedReport.patient),
+                    _buildReportSection(selectedReport),
                     const SizedBox(height: 50),
                   ],
                 ),
@@ -92,56 +92,12 @@ class _DashboardWidgetState extends State<DashboardWidget>
     );
   }
 
-  Widget _buildPatientProfileSection(LabReportAndPatient? selectedReport) {
-    return _buildSectionContainer(
-        children: selectedReport == null
-            ? const [Text('No patient selected')]
-            : _buildPatientDetails(selectedReport));
-  }
-
-  List<Widget> _buildPatientDetails(LabReportAndPatient? selectedReport) {
-    var patient = selectedReport!;
-    return [
-      Row(
-        children: [
-          Expanded(
-              child: _buildPatientProfileRow(
-                  'Patient Profile', _formatPatientInfo(patient))),
-          Expanded(
-              child: _buildPatientProfileRow('Anamnesis',
-                  patient.patient.history?.text ?? 'No history available')),
-        ],
-      ),
-    ];
-  }
-
-  String _formatPatientInfo(LabReportAndPatient patient) {
-    return 'Name: ${patient.patient.name}\nBirth Date: ${patient.patient.birthDate}\nWeight: ${patient.patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.patient.history?.height ?? 'Unknown'}cm';
-  }
-
-  Widget _buildPatientProfileRow(String title, String content) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-      child: Container(
-        width: double.infinity,
-        decoration: _sectionDecoration(),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(content),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEditableSummarySection(LabReportAndPatient? selectedReport) {
+  Widget _buildReportSection(LabReportAndPatient selectedReport) {
     return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
+      builder: (
+        BuildContext context,
+        BoxConstraints constraints,
+      ) {
         final double biomarkersMinWidth = 500; // Set your minimum width here
         final double availableWidth = constraints.maxWidth;
         final double biomarkersWidth = (availableWidth > biomarkersMinWidth)
@@ -153,28 +109,21 @@ class _DashboardWidgetState extends State<DashboardWidget>
           children: <Widget>[
             SizedBox(
               width: biomarkersWidth,
-              child: _buildBiomarkersSection(selectedReport),
+              child: _buildBiomarkersList(selectedReport),
             ),
-            if (selectedReport != null)
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildParagraphBox(selectedReport),
-                    _buildNewBox(selectedReport),
-                  ],
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildParagraphBox(selectedReport),
+                  _buildRecommendationsBox(selectedReport),
+                ],
               ),
+            ),
           ],
         );
       },
     );
-  }
-
-  Widget _buildBiomarkersSection(LabReportAndPatient? selectedReport) {
-    return selectedReport == null
-        ? _buildSectionContainer(children: [Text('No biomarker selected')])
-        : _buildBiomarkersList(selectedReport);
   }
 
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
@@ -310,6 +259,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                           color: const Color.fromARGB(255, 221, 221, 221),
                           borderRadius: BorderRadius.circular(10)),
                     ),
+
                     // Green range container
                     Transform.translate(
                       offset: offsetValue,
@@ -322,6 +272,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         ),
                       ),
                     ),
+
                     // Black line indicator
                     Positioned(
                       left: lineLeftPosition,
@@ -329,6 +280,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                       child:
                           Container(width: 2, height: 16, color: Colors.black),
                     ),
+
                     // Conditionally add labels at the bottom
                     if (minimumRange != null)
                       Positioned(
@@ -371,15 +323,17 @@ class _DashboardWidgetState extends State<DashboardWidget>
     _bloc.add(EditReportEvent(selectedReport.labReport.id, summary: value));
 
     final report = Report(
-        id: selectedReport.labReport.id,
-        name: selectedReport.labReport.name,
-        reportDate: selectedReport.labReport.reportDate,
-        biomarkerValues: selectedReport.labReport.biomarkerValues,
-        patientId: selectedReport.labReport.patientId,
-        executiveSummary: value,
-        recommendations: selectedReport.labReport.recommendations,
-        doctorName: selectedReport.labReport.doctorName,
-        displayed: selectedReport.labReport.displayed);
+      id: selectedReport.labReport.id,
+      name: selectedReport.labReport.name,
+      reportDate: selectedReport.labReport.reportDate,
+      biomarkerValues: selectedReport.labReport.biomarkerValues,
+      patientId: selectedReport.labReport.patientId,
+      executiveSummary: value,
+      recommendations: selectedReport.labReport.recommendations,
+      doctorName: selectedReport.labReport.doctorName,
+      displayed: selectedReport.labReport.displayed,
+    );
+
     _sidebarBloc.add(
       UpdateSelectedReportEvent(
         LabReportAndPatient(labReport: report, patient: selectedReport.patient),
@@ -456,7 +410,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
     );
   }
 
-  Widget _buildNewBox(LabReportAndPatient selectedReport) {
+  Widget _buildRecommendationsBox(LabReportAndPatient selectedReport) {
     return GestureDetector(
       onTap: () => setState(() => _newBoxFocus.requestFocus()),
       child: Container(

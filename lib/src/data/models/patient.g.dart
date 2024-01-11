@@ -13,6 +13,7 @@ Patient _$PatientFromJson(Map<String, dynamic> json) => Patient(
           : PatientHistory.fromJson(json['history'] as Map<String, dynamic>),
       birthDate: DateTime.parse(json['birthDate'] as String),
       id: json['id'] as String,
+      phoneNumber: json['phoneNumber'] as String,
     );
 
 Map<String, dynamic> _$PatientToJson(Patient instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$PatientToJson(Patient instance) => <String, dynamic>{
       'history': instance.history,
       'birthDate': instance.birthDate.toIso8601String(),
       'id': instance.id,
+      'phoneNumber': instance.phoneNumber,
     };
