@@ -65,7 +65,7 @@ class ApiClient {
           },
           // Replace with actual biomarker values
           patientId: 'patient-id-$i',
-          executiveSummary: "Executive summary of lab report $i",
+          summary: "Executive summary of lab report $i",
           recommendations: "Recommendations based on lab report $i",
           doctorName: "Dr. Smith $i",
           displayed: false,
@@ -142,7 +142,7 @@ class ApiClient {
           },
           // Replace with actual biomarker values
           patientId: 'patient-id-$i',
-          executiveSummary: "Executive summary of lab report $i",
+          summary: "Executive summary of lab report $i",
           recommendations: "Recommendations based on lab report $i",
           doctorName: "Dr. Smith $i",
           displayed: false,

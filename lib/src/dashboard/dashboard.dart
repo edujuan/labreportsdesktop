@@ -66,7 +66,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
         }
 
         _updateExecutiveSummaryController(
-          selectedReport.labReport.executiveSummary,
+          selectedReport.labReport.summary,
           selectedReport.labReport.recommendations,
         );
 
@@ -328,7 +328,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
       reportDate: selectedReport.labReport.reportDate,
       biomarkerValues: selectedReport.labReport.biomarkerValues,
       patientId: selectedReport.labReport.patientId,
-      executiveSummary: value,
+      summary: value,
       recommendations: selectedReport.labReport.recommendations,
       doctorName: selectedReport.labReport.doctorName,
       displayed: selectedReport.labReport.displayed,
@@ -399,7 +399,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
         reportDate: selectedReport.labReport.reportDate,
         biomarkerValues: selectedReport.labReport.biomarkerValues,
         patientId: selectedReport.labReport.patientId,
-        executiveSummary: selectedReport.labReport.executiveSummary,
+        summary: selectedReport.labReport.summary,
         recommendations: value,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);

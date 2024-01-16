@@ -11,7 +11,7 @@ class Report {
   final DateTime reportDate;
   final Map<String, Biomarker> biomarkerValues;
   final String patientId;
-  final String executiveSummary;
+  final String summary;
   final String recommendations;
   final String doctorName;
   final bool displayed;
@@ -22,7 +22,7 @@ class Report {
     required this.reportDate,
     required this.biomarkerValues,
     required this.patientId,
-    required this.executiveSummary,
+    required this.summary,
     required this.recommendations,
     required this.doctorName,
     required this.displayed,

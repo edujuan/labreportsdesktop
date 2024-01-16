@@ -25,9 +25,6 @@ class PatientSection extends StatelessWidget {
     //     ),
   }
 
-  String _formatPatientInfo(Patient patient) {
-    return 'Name: ${patient.name}\nBirth Date: ${patient.birthDate.day}/${patient.birthDate.month}/${patient.birthDate.year}\nWeight: ${patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.history?.height ?? 'Unknown'}cm';
-  }
 
   Widget _buildPatientProfileRow(String title, String content) {
     return Padding(
