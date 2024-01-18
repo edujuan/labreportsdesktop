@@ -22,6 +22,7 @@ class _AppState extends State<App> {
         ),
         home: const Scaffold(
           body: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SidebarWidget(),
               Expanded(child: DashboardWidget()),
