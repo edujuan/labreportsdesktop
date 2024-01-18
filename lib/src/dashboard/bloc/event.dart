@@ -7,7 +7,8 @@ sealed class DashboardEvent extends Equatable {
 
 final class EditReportEvent extends DashboardEvent {
   final String id;
-  final String? summary, recommendation;
+  final String? summary;
+  final List<String>? recommendation;
 
   EditReportEvent(this.id, {this.summary, this.recommendation});
 }

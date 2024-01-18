@@ -72,9 +72,9 @@ class ApiClient {
         );
 
         var patientHistory = PatientHistory(
-          text: "Patient $i has a history of...",
           weight: 70 + i,
           height: 175 + i,
+          previousIllnessesAndDiagnoses: '', currentHealthStatus: '', anamnesis: '', medicationsAndTreatments: '',
         );
 
         var patient = Patient(
@@ -150,9 +150,9 @@ class ApiClient {
         );
 
         var patientHistory = PatientHistory(
-          text: "Patient $i has a history of...",
           weight: 70 + i,
           height: 175 + i,
+          previousIllnessesAndDiagnoses: '', currentHealthStatus: '', anamnesis: '', medicationsAndTreatments: '',
         );
 
         var patient = Patient(

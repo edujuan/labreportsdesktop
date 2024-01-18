@@ -23,8 +23,8 @@ class PatientSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _buildPatientProfileRow(
-          'Anamnesis',
-          patient.history?.text ?? 'No history available',
+          'Previous Illnesses and Diagnoses',
+          patient.history?.previousIllnessesAndDiagnoses ?? 'No history available',
         ),
       ],
     );

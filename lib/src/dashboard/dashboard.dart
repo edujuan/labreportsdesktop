@@ -20,9 +20,9 @@ class _DashboardWidgetState extends State<DashboardWidget>
   late final DashboardBloc _bloc;
 
   final TextEditingController _paragraphController = TextEditingController();
-  final TextEditingController _newBoxController = TextEditingController();
+  final List<TextEditingController> _newBoxController = [TextEditingController(), TextEditingController(), TextEditingController()];
   final FocusNode _paragraphFocus = FocusNode();
-  final FocusNode _newBoxFocus = FocusNode();
+  final List<FocusNode> _newBoxFocus = [FocusNode(), FocusNode(), FocusNode()];
 
   @override
   void initState() {
@@ -34,18 +34,20 @@ class _DashboardWidgetState extends State<DashboardWidget>
 
   void _updateExecutiveSummaryController(
     String executiveSummary,
-    String recommendations,
+    List<String> recommendations,
   ) {
     _paragraphController.text = executiveSummary;
-    _newBoxController.text = recommendations;
+    for (int i = 0; i<recommendations.length; i++){
+      _newBoxController[i].text = recommendations[i];
+    }
   }
 
   @override
   void dispose() {
     _paragraphController.dispose();
     _paragraphFocus.dispose();
-    _newBoxController.dispose(); // Add this line
-    _newBoxFocus.dispose(); // Add this line
+    _newBoxController.forEach((element) {element.dispose();});
+    _newBoxFocus.forEach((element) {element.dispose();});
     super.dispose();
   }
 
@@ -411,9 +413,18 @@ class _DashboardWidgetState extends State<DashboardWidget>
   void _updateRecommendations(
     LabReportAndPatient selectedReport,
     String value,
+    int index
   ) {
+    List<String> newRecommendations = [];
+    for(int i = 0; i<selectedReport.labReport.recommendations.length; i++){
+      if(i == index) {
+        newRecommendations.add(value);
+      } else {
+        newRecommendations.add(selectedReport.labReport.recommendations[i]);
+      }
+    }
     _bloc.add(
-      EditReportEvent(selectedReport.labReport.id, recommendation: value),
+      EditReportEvent(selectedReport.labReport.id, recommendation: newRecommendations),
     );
 
     final report = Report(
@@ -423,7 +434,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
         biomarkerValues: selectedReport.labReport.biomarkerValues,
         patientId: selectedReport.labReport.patientId,
         summary: selectedReport.labReport.summary,
-        recommendations: value,
+        recommendations: newRecommendations,
         doctorName: selectedReport.labReport.doctorName,
         displayed: selectedReport.labReport.displayed);
     _sidebarBloc.add(
@@ -435,7 +446,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
 
   Widget _buildRecommendationsBox(LabReportAndPatient selectedReport) {
     return GestureDetector(
-      onTap: () => setState(() => _newBoxFocus.requestFocus()),
+      //onTap: () => setState(() => _newBoxFocus.requestFocus()),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -448,11 +459,12 @@ class _DashboardWidgetState extends State<DashboardWidget>
             const Text('Recommendations',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
+          ] + selectedReport.labReport.recommendations.indexed.map((indexedRecommendation) =>
             TextField(
-              focusNode: _newBoxFocus,
-              controller: _newBoxController,
+              focusNode: _newBoxFocus[indexedRecommendation.$1],
+              controller: _newBoxController[indexedRecommendation.$1],
               onSubmitted: (value) =>
-                  _updateRecommendations(selectedReport, value),
+                  _updateRecommendations(selectedReport, value, indexedRecommendation.$1),
               maxLines: null,
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -461,14 +473,14 @@ class _DashboardWidgetState extends State<DashboardWidget>
                   icon: Icon(Icons.check, size: 20, color: Colors.grey),
                   onPressed: () {
                     _updateRecommendations(
-                        selectedReport, _newBoxController.value.text);
+                        selectedReport, _newBoxController[indexedRecommendation.$1].value.text, indexedRecommendation.$1);
                   },
                 ),
               ),
               style: TextStyle(fontSize: 16),
               cursorColor: Colors.blue,
             ),
-          ],
+          ).toList()
         ),
       ),
     );
