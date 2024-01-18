@@ -136,8 +136,6 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
-    var labandpatient = selectedReport;
-
     final biomarkers = groupBy(selectedReport.labReport.biomarkerValues.values,
             (Biomarker b) => b.bucket)
         .entries
@@ -175,6 +173,10 @@ class _DashboardWidgetState extends State<DashboardWidget>
 
     const double rangeSize = 120;
 
+  // Color logic based on the value position
+    Color greenContainerColor = Colors.green;
+    Color backgroundContainerColor = const Color.fromARGB(255, 221, 221, 221);
+
     double greenContainerWidth = rangeSize * 0.75;
     double greenStart = (1 - (greenContainerWidth / rangeSize)) * rangeSize;
     double expansionRation = 1.1;
@@ -182,6 +184,12 @@ class _DashboardWidgetState extends State<DashboardWidget>
     Offset offsetValue = Offset(0, 0);
     double lineLeftPosition;
     Color lineColor = Colors.green;
+
+    if ((minimumRange != null && valuePosition < minimumRange) ||
+      (maximumRange != null && valuePosition > maximumRange)) {
+    greenContainerColor = const Color.fromARGB(255, 221, 221, 221); // Grey
+    backgroundContainerColor = Colors.red; // Amber
+    }
 
     if (minimumRange != null && maximumRange != null) {
       // Both ranges are provided
@@ -288,7 +296,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                       width: rangeSize,
                       height: 10,
                       decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 221, 221, 221),
+                          color: backgroundContainerColor,
                           borderRadius: BorderRadius.circular(10)),
                     ),
 
@@ -299,7 +307,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         width: greenContainerWidth,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: greenContainerColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -320,7 +328,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         top: 15,
                         bottom: 0,
                         child: Text(
-                          '$minimumRange $unit',
+                          '$minimumRange',
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
@@ -330,7 +338,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         top: 15,
                         bottom: 0,
                         child: Text(
-                          '$maximumRange $unit',
+                          '$maximumRange',
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
