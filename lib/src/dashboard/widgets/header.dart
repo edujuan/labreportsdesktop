@@ -58,7 +58,7 @@ class _HeaderState extends State<Header> {
 
         final patient = widget.report.patient;
 
-        final name = patient.name;
+        final name = '${patient.name} (${patient.gender})';
 
         final age =
             'Age: ${(DateTime.now().difference(patient.birthDate).inDays / 365.25).floor()}';
