@@ -67,6 +67,15 @@ class Biomarker {
     return "Data not available"; // In case min and max are both null
   }
 
+  bool get isOutOfRange {
+    switch (getHealth()) {
+      case 'Healthy':
+        return false;
+      default:
+        return true;
+    }
+  }
+
   factory Biomarker.fromJson(Map<String, dynamic> json) =>
       _$BiomarkerFromJson(json);
 

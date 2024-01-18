@@ -100,7 +100,10 @@ class _DashboardWidgetState extends State<DashboardWidget>
                             children: [
                               Header(report: selectedReport),
                               const SizedBox(height: 16),
-                              PatientSection(patient: selectedReport.patient),
+                              PatientSection(
+                                report: selectedReport.labReport,
+                                patient: selectedReport.patient,
+                              ),
                             ],
                           ),
                         ),

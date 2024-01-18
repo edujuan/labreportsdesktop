@@ -22,7 +22,7 @@ class _HeaderState extends State<Header> {
   Future<void> _approveReport() async {
     final result = await _showDialog(
       context,
-      'Report will be sent to user',
+      'Please confirm your decision to send the report to the patient',
     );
 
     if (result) {
