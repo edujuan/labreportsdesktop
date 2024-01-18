@@ -78,6 +78,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
             return LayoutBuilder(builder: (context, constraints) {
               final maxWidth = constraints.maxWidth;
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
                     width: (maxWidth / 3).clamp(250, 450),
