@@ -12,7 +12,7 @@ class Report {
   final Map<String, Biomarker> biomarkerValues;
   final String patientId;
   final String summary;
-  final String recommendations;
+  final List<String> recommendations;
   final String doctorName;
   final bool displayed;
 

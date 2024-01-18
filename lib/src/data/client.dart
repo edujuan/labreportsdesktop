@@ -66,7 +66,7 @@ class ApiClient {
           // Replace with actual biomarker values
           patientId: 'patient-id-$i',
           summary: "Executive summary of lab report $i",
-          recommendations: "Recommendations based on lab report $i",
+          recommendations: ["Recommendations based on lab report $i"],
           doctorName: "Dr. Smith $i",
           displayed: false,
         );
@@ -143,7 +143,7 @@ class ApiClient {
           // Replace with actual biomarker values
           patientId: 'patient-id-$i',
           summary: "Executive summary of lab report $i",
-          recommendations: "Recommendations based on lab report $i",
+          recommendations: ["Recommendations based on lab report $i"],
           doctorName: "Dr. Smith $i",
           displayed: false,
         );
@@ -169,7 +169,7 @@ class ApiClient {
   }
 
   Future<Report?> editReport(
-      String id, String? summary, String? recommendation) async {
+      String id, String? summary, List<String>? recommendation) async {
     final response = await _request('/lab-reports/edit/$id',
         body: ReportEdit(
                 executiveSummary: summary, recommendations: recommendation)

@@ -15,7 +15,9 @@ Report _$ReportFromJson(Map<String, dynamic> json) => Report(
       ),
       patientId: json['patientId'] as String,
       summary: json['summary'] as String,
-      recommendations: json['recommendations'] as String,
+      recommendations: (json['recommendations'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       doctorName: json['doctorName'] as String,
       displayed: json['displayed'] as bool,
     );
