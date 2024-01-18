@@ -80,6 +80,7 @@ class ApiClient {
         var patient = Patient(
           name: "John Doe $i",
           phoneNumber: '+491111',
+          gender: 'm',
           history: patientHistory,
           birthDate: DateTime(1985, 5, 20).add(Duration(days: i * 365)),
           id: '',
@@ -156,6 +157,7 @@ class ApiClient {
 
         var patient = Patient(
           name: "John Doe $i",
+          gender: 'm',
           history: patientHistory,
           phoneNumber: '+491111',
           birthDate: DateTime(1985, 5, 20).add(Duration(days: i * 365)),
