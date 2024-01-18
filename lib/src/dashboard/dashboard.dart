@@ -50,84 +50,72 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   @override
-Widget build(BuildContext context) {
-  return BlocBuilder<SidebarBloc, SidebarState>(
-    bloc: _sidebarBloc,
-    builder: (sidebarContext, sidebarState) {
-      final selectedReport = sidebarState.selectedLabReport;
+  Widget build(BuildContext context) {
+    return BlocBuilder<SidebarBloc, SidebarState>(
+      bloc: _sidebarBloc,
+      builder: (sidebarContext, sidebarState) {
+        final selectedReport = sidebarState.selectedLabReport;
 
-      if (selectedReport == null) {
-        return const Scaffold(
-          backgroundColor: Color(0xFFF1F4F8),
-          body: SafeArea(
-            child: Align(child: Text("Select a patient from the sidebar")),
-          ),
-        );
-      }
-
-      _updateExecutiveSummaryController(
-        selectedReport.labReport.summary,
-        selectedReport.labReport.recommendations,
-      );
-
-      return BlocBuilder<DashboardBloc, DashboardState>(
-        bloc: _bloc,
-        builder: (dashboardContext, dashboardState) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFF1F4F8),
-            body: Column(
-              children: [
-                Header(report: selectedReport),  // Fixed Header
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        PatientSection(patient: selectedReport.patient),
-                        _buildReportSection(selectedReport),
-                        const SizedBox(height: 50),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+        if (selectedReport == null) {
+          return const Scaffold(
+            backgroundColor: Color(0xFFF1F4F8),
+            body: SafeArea(
+              child: Align(child: Text("Select a patient from the sidebar")),
             ),
           );
-        },
-      );
-    },
-  );
-}
+        }
 
+        _updateExecutiveSummaryController(
+          selectedReport.labReport.summary,
+          selectedReport.labReport.recommendations,
+        );
 
-  Widget _buildReportSection(LabReportAndPatient selectedReport) {
-    return LayoutBuilder(
-      builder: (
-        BuildContext context,
-        BoxConstraints constraints,
-      ) {
-        final double biomarkersMinWidth = 500; // Set your minimum width here
-        final double availableWidth = constraints.maxWidth;
-        final double biomarkersWidth = (availableWidth > biomarkersMinWidth)
-            ? biomarkersMinWidth
-            : availableWidth;
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              width: biomarkersWidth,
-              child: _buildBiomarkersList(selectedReport),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        return BlocBuilder<DashboardBloc, DashboardState>(
+          bloc: _bloc,
+          builder: (dashboardContext, dashboardState) {
+            return LayoutBuilder(builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              return Row(
                 children: [
-                  _buildParagraphBox(selectedReport),
-                  _buildRecommendationsBox(selectedReport),
+                  SizedBox(
+                    width: (maxWidth / 3).clamp(250, 450),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minWidth: 250),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Header(report: selectedReport),
+                              const SizedBox(height: 16),
+                              PatientSection(patient: selectedReport.patient),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            _buildParagraphBox(selectedReport),
+                            const SizedBox(height: 16),
+                            _buildRecommendationsBox(selectedReport),
+                            const SizedBox(height: 16),
+                            _buildBiomarkersList(selectedReport),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ],
+              );
+            });
+          },
         );
       },
     );
@@ -352,8 +340,6 @@ Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => setState(() => _paragraphFocus.requestFocus()),
       child: Container(
-        width: 330, // Adjust the width as needed
-        margin: const EdgeInsetsDirectional.fromSTEB(0, 12, 16, 0),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white, // Background color for the box
@@ -421,8 +407,6 @@ Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => setState(() => _newBoxFocus.requestFocus()),
       child: Container(
-        width: 330, // Adjust the width as needed
-        margin: const EdgeInsetsDirectional.fromSTEB(0, 12, 16, 0),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white, // Background color for the box
@@ -461,15 +445,12 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildSectionContainer({required List<Widget> children}) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(children: children),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
       ),
+      child: Column(children: children),
     );
   }
 }
