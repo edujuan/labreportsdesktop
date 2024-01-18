@@ -20,7 +20,11 @@ class _DashboardWidgetState extends State<DashboardWidget>
   late final DashboardBloc _bloc;
 
   final TextEditingController _paragraphController = TextEditingController();
-  final List<TextEditingController> _newBoxController = [TextEditingController(), TextEditingController(), TextEditingController()];
+  final List<TextEditingController> _newBoxController = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController()
+  ];
   final FocusNode _paragraphFocus = FocusNode();
   final List<FocusNode> _newBoxFocus = [FocusNode(), FocusNode(), FocusNode()];
 
@@ -37,7 +41,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
     List<String> recommendations,
   ) {
     _paragraphController.text = executiveSummary;
-    for (int i = 0; i<recommendations.length; i++){
+    for (int i = 0; i < recommendations.length; i++) {
       _newBoxController[i].text = recommendations[i];
     }
   }
@@ -46,8 +50,12 @@ class _DashboardWidgetState extends State<DashboardWidget>
   void dispose() {
     _paragraphController.dispose();
     _paragraphFocus.dispose();
-    _newBoxController.forEach((element) {element.dispose();});
-    _newBoxFocus.forEach((element) {element.dispose();});
+    _newBoxController.forEach((element) {
+      element.dispose();
+    });
+    _newBoxFocus.forEach((element) {
+      element.dispose();
+    });
     super.dispose();
   }
 
@@ -91,7 +99,10 @@ class _DashboardWidgetState extends State<DashboardWidget>
                             children: [
                               Header(report: selectedReport),
                               const SizedBox(height: 16),
-                              PatientSection(patient: selectedReport.patient),
+                              PatientSection(
+                                report: selectedReport.labReport,
+                                patient: selectedReport.patient,
+                              ),
                             ],
                           ),
                         ),
@@ -405,20 +416,18 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   void _updateRecommendations(
-    LabReportAndPatient selectedReport,
-    String value,
-    int index
-  ) {
+      LabReportAndPatient selectedReport, String value, int index) {
     List<String> newRecommendations = [];
-    for(int i = 0; i<selectedReport.labReport.recommendations.length; i++){
-      if(i == index) {
+    for (int i = 0; i < selectedReport.labReport.recommendations.length; i++) {
+      if (i == index) {
         newRecommendations.add(value);
       } else {
         newRecommendations.add(selectedReport.labReport.recommendations[i]);
       }
     }
     _bloc.add(
-      EditReportEvent(selectedReport.labReport.id, recommendation: newRecommendations),
+      EditReportEvent(selectedReport.labReport.id,
+          recommendation: newRecommendations),
     );
 
     final report = Report(
@@ -448,34 +457,42 @@ class _DashboardWidgetState extends State<DashboardWidget>
           borderRadius: BorderRadius.circular(15), // Rounded corners
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Recommendations',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-          ] + selectedReport.labReport.recommendations.indexed.map((indexedRecommendation) =>
-            TextField(
-              focusNode: _newBoxFocus[indexedRecommendation.$1],
-              controller: _newBoxController[indexedRecommendation.$1],
-              onSubmitted: (value) =>
-                  _updateRecommendations(selectedReport, value, indexedRecommendation.$1),
-              maxLines: null,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Tap to edit...',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.check, size: 20, color: Colors.grey),
-                  onPressed: () {
-                    _updateRecommendations(
-                        selectedReport, _newBoxController[indexedRecommendation.$1].value.text, indexedRecommendation.$1);
-                  },
-                ),
-              ),
-              style: TextStyle(fontSize: 16),
-              cursorColor: Colors.blue,
-            ),
-          ).toList()
-        ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                  const Text('Recommendations',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                ] +
+                selectedReport.labReport.recommendations.indexed
+                    .map(
+                      (indexedRecommendation) => TextField(
+                        focusNode: _newBoxFocus[indexedRecommendation.$1],
+                        controller: _newBoxController[indexedRecommendation.$1],
+                        onSubmitted: (value) => _updateRecommendations(
+                            selectedReport, value, indexedRecommendation.$1),
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Tap to edit...',
+                          suffixIcon: IconButton(
+                            icon:
+                                Icon(Icons.check, size: 20, color: Colors.grey),
+                            onPressed: () {
+                              _updateRecommendations(
+                                  selectedReport,
+                                  _newBoxController[indexedRecommendation.$1]
+                                      .value
+                                      .text,
+                                  indexedRecommendation.$1);
+                            },
+                          ),
+                        ),
+                        style: TextStyle(fontSize: 16),
+                        cursorColor: Colors.blue,
+                      ),
+                    )
+                    .toList()),
       ),
     );
   }
