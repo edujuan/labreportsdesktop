@@ -50,47 +50,54 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SidebarBloc, SidebarState>(
-      bloc: _sidebarBloc,
-      builder: (sidebarContext, sidebarState) {
-        final selectedReport = sidebarState.selectedLabReport;
+Widget build(BuildContext context) {
+  return BlocBuilder<SidebarBloc, SidebarState>(
+    bloc: _sidebarBloc,
+    builder: (sidebarContext, sidebarState) {
+      final selectedReport = sidebarState.selectedLabReport;
 
-        if (selectedReport == null) {
-          return const Scaffold(
-            backgroundColor: Color(0xFFF1F4F8),
-            body: SafeArea(
-              child: Align(child: Text("Select a patient from the sidebar")),
+      if (selectedReport == null) {
+        return const Scaffold(
+          backgroundColor: Color(0xFFF1F4F8),
+          body: SafeArea(
+            child: Align(child: Text("Select a patient from the sidebar")),
+          ),
+        );
+      }
+
+      _updateExecutiveSummaryController(
+        selectedReport.labReport.summary,
+        selectedReport.labReport.recommendations,
+      );
+
+      return BlocBuilder<DashboardBloc, DashboardState>(
+        bloc: _bloc,
+        builder: (dashboardContext, dashboardState) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFF1F4F8),
+            body: Column(
+              children: [
+                Header(report: selectedReport),  // Fixed Header
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        PatientSection(patient: selectedReport.patient),
+                        _buildReportSection(selectedReport),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
-        }
+        },
+      );
+    },
+  );
+}
 
-        _updateExecutiveSummaryController(
-          selectedReport.labReport.summary,
-          selectedReport.labReport.recommendations,
-        );
-
-        return BlocBuilder<DashboardBloc, DashboardState>(
-          bloc: _bloc,
-          builder: (dashboardContext, dashboardState) {
-            return Scaffold(
-              backgroundColor: const Color(0xFFF1F4F8),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Header(report: selectedReport),
-                    PatientSection(patient: selectedReport.patient),
-                    _buildReportSection(selectedReport),
-                    const SizedBox(height: 50),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   Widget _buildReportSection(LabReportAndPatient selectedReport) {
     return LayoutBuilder(
@@ -356,7 +363,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Summary Title',
+              'Summary',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),

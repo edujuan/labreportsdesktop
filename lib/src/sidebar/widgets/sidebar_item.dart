@@ -18,25 +18,32 @@ class SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final age = (DateTime.now().difference(birthDate).inDays / 365.3).floor();
+    final age = (DateTime.now().difference(birthDate).inDays / 365.25).floor();
 
     return Container(
-      color: isSelected ? Colors.black : Colors.grey.shade200,
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(
-          Icons.person_outline,
-          color: isSelected ? Colors.white : Colors.black,
-        ),
-        title: Text(
-          'Name: $name, $age',
-          style: TextStyle(color: isSelected ? Colors.white : Colors.black),
-        ),
-        subtitle: Text(
-          'Date: ${date.day}/${date.month}/${date.year}',
-          style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(17), // Set your desired border radius here
+        child: Container(
+          color: isSelected ? const Color(0XFF246A6D) : Colors.white,
+          child: ListTile(
+            onTap: onTap,
+            leading: Icon(
+              Icons.person_outline,
+              color: isSelected ? Colors.white : Colors.black,
+            ),
+            title: Text(
+              'Name: $name, $age',
+              style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+            ),
+            subtitle: Text(
+              'Date: ${date.day}/${date.month}/${date.year}',
+              style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+            ),
+          ),
         ),
       ),
     );
   }
+
 }

@@ -53,7 +53,7 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.report.patient.name;
+    final name = '${widget.report.patient.name}  Webber (W)';
 
     return BlocBuilder<SidebarBloc, SidebarState>(
       bloc: Provider.of<SidebarBloc>(context),
@@ -67,31 +67,30 @@ class _HeaderState extends State<Header> {
 
         return Container(
           color: Colors.white,
+          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Text(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max, // Make the column occupy all available space
+                  mainAxisAlignment: MainAxisAlignment.center, // Align children to the center
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
                         name,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Patient Profile',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(info),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
+                    ),
+                    // ... other children if any
+                  ],
                 ),
               ),
+            ),
               SizedBox(
                 height: 60,
                 child: Row(
@@ -169,4 +168,5 @@ class ActionButton extends StatelessWidget {
       ),
     );
   }
+
 }
