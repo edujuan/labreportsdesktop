@@ -155,7 +155,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                 child: Text(
                   bucket.key,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -520,17 +520,32 @@ class _DashboardWidgetState extends State<DashboardWidget>
       ),
       child: Column(
           children: <Widget>[
-                Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      tooltip: showAll ? "Show only out of range biomarkers" : "Show all",
-                      onPressed: () {
-                        setState(() {
-                          showAll = !showAll;
-                        });
-                      },
-                      icon: const Icon(Icons.filter_list_alt),
-                    )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    bottom: 16,
+                    right: 16,
+                    left: 16,
+                    ),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                        "Biomarkers",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        )),
+                        IconButton(
+                        tooltip: showAll ? "Show only out of range biomarkers" : "Show all",
+                        onPressed: () {
+                          setState(() {
+                            showAll = !showAll;
+                          });
+                        },
+                        icon: const Icon(Icons.filter_list_alt),
+                      )]),
+                ),
               ] +
               children),
     );
