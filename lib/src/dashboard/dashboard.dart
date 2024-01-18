@@ -142,14 +142,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                   ),
                 ),
               ),
-              for (final b in bucket.value)
-                _buildBiomarkerRow(
-                  b.name,
-                  b.value.toString(),
-                  b.value,
-                  minimumRange: b.minValue,
-                  maximumRange: b.maxValue,
-                ),
+              for (final b in bucket.value) _buildBiomarkerRow(b),
             ],
           ),
         )
@@ -160,13 +153,13 @@ class _DashboardWidgetState extends State<DashboardWidget>
     );
   }
 
-  Widget _buildBiomarkerRow(
-    String title,
-    String value,
-    double valuePosition, {
-    double? minimumRange,
-    double? maximumRange,
-  }) {
+  Widget _buildBiomarkerRow(Biomarker biomarker) {
+    final minimumRange = biomarker.minValue;
+    final maximumRange = biomarker.maxValue;
+    final valuePosition = biomarker.value;
+    final title = biomarker.name;
+    final unit = biomarker.unit;
+
     const double rangeSize = 120;
 
     double greenContainerWidth = rangeSize * 0.75;
@@ -269,7 +262,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                 ),
               ),
               Expanded(
-                child: Text(value),
+                child: Text('$valuePosition $unit'),
               ),
               SizedBox(
                 width: rangeSize,
@@ -314,7 +307,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         top: 15,
                         bottom: 0,
                         child: Text(
-                          minimumRange.toString(),
+                          '$minimumRange $unit',
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
@@ -324,7 +317,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                         top: 15,
                         bottom: 0,
                         child: Text(
-                          maximumRange.toString(),
+                          '$maximumRange $unit',
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
