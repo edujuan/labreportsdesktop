@@ -27,6 +27,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
   ];
   final FocusNode _paragraphFocus = FocusNode();
   final List<FocusNode> _newBoxFocus = [FocusNode(), FocusNode(), FocusNode()];
+  bool showAll = true;
 
   @override
   void initState() {
@@ -136,7 +137,13 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
-    final biomarkers = groupBy(selectedReport.labReport.biomarkerValues.values,
+    var labandpatient = selectedReport;
+
+    final biomarkers = groupBy(
+            selectedReport.labReport.biomarkerValues.values.where((biom) =>
+                showAll ||
+                (biom.minValue != null && biom.minValue! > biom.value) ||
+                (biom.maxValue != null && biom.maxValue! < biom.value)),
             (Biomarker b) => b.bucket)
         .entries
         .map(
@@ -511,7 +518,21 @@ class _DashboardWidgetState extends State<DashboardWidget>
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Column(children: children),
+      child: Column(
+          children: <Widget>[
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      tooltip: showAll ? "Show only out of range biomarkers" : "Show all",
+                      onPressed: () {
+                        setState(() {
+                          showAll = !showAll;
+                        });
+                      },
+                      icon: const Icon(Icons.filter_list_alt),
+                    )),
+              ] +
+              children),
     );
   }
 
