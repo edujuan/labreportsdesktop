@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../../data/data.dart';
@@ -12,8 +14,11 @@ class PatientSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bmi =
+        (patient.history!.weight / (pow((patient.history!.height / 100), 2)))
+            .toStringAsFixed(2);
     final info =
-        'Name: ${patient.name}\nBirth Date: ${patient.birthDate.day}/${patient.birthDate.month}/${patient.birthDate.year}\nPhone Number: ${patient.phoneNumber}\nWeight: ${patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.history?.height ?? 'Unknown'}cm';
+        'Name: ${patient.name}\nBirth Date: ${patient.birthDate.day}/${patient.birthDate.month}/${patient.birthDate.year}\nGender: ${patient.gender}\nWeight: ${patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.history?.height ?? 'Unknown'}cm\nBMI: $bmi';
 
     return Column(
       children: [
@@ -24,7 +29,7 @@ class PatientSection extends StatelessWidget {
         const SizedBox(height: 16),
         _buildPatientProfileRow(
           'Anamnesis',
-          patient.history?.text ?? 'No history available',
+          patient.history?.anamnesis ?? 'No history available',
         ),
       ],
     );

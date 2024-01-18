@@ -8,14 +8,21 @@ part of 'patient_history.dart';
 
 PatientHistory _$PatientHistoryFromJson(Map<String, dynamic> json) =>
     PatientHistory(
-      text: json['text'] as String,
+      anamnesis: json['anamnesis'] as String,
+      previousIllnessesAndDiagnoses:
+          json['previousIllnessesAndDiagnoses'] as String,
+      currentHealthStatus: json['currentHealthStatus'] as String,
+      medicationsAndTreatments: json['medicationsAndTreatments'] as String,
       weight: json['weight'] as int,
       height: json['height'] as int,
     );
 
 Map<String, dynamic> _$PatientHistoryToJson(PatientHistory instance) =>
     <String, dynamic>{
-      'text': instance.text,
+      'anamnesis': instance.anamnesis,
+      'previousIllnessesAndDiagnoses': instance.previousIllnessesAndDiagnoses,
+      'currentHealthStatus': instance.currentHealthStatus,
+      'medicationsAndTreatments': instance.medicationsAndTreatments,
       'weight': instance.weight,
       'height': instance.height,
     };
