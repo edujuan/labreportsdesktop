@@ -14,11 +14,15 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return const DependenciesScope(
+    return DependenciesScope(
       child: MaterialApp(
         title: 'Health Report',
-        home: Scaffold(
+        theme: ThemeData(
+          scaffoldBackgroundColor: const Color(0xFFF1F4F8),
+        ),
+        home: const Scaffold(
           body: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SidebarWidget(),
               Expanded(child: DashboardWidget()),

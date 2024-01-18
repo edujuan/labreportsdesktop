@@ -16,7 +16,7 @@ class Toggles extends StatelessWidget {
       padding: const EdgeInsets.only(top: 15),
       child: ToggleButtons(
         selectedColor: Colors.white,
-        fillColor: Colors.black,
+        fillColor: const Color(0XFF246A6D),
         isSelected: [state.showReportsInReview, !state.showReportsInReview],
         onPressed: (int index) {
           bloc.add(SwitchReportTabEvent(index == 0));

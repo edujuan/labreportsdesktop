@@ -53,8 +53,6 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.report.patient.name;
-
     return BlocBuilder<SidebarBloc, SidebarState>(
       bloc: Provider.of<SidebarBloc>(context),
       builder: (context, state) {
@@ -62,53 +60,59 @@ class _HeaderState extends State<Header> {
 
         final patient = widget.report.patient;
 
-        final info =
-            'Name: ${patient.name}\nBirth Date: ${patient.birthDate.day}/${patient.birthDate.month}/${patient.birthDate.year}\nPhone Number: ${patient.phoneNumber}\nWeight: ${patient.history?.weight ?? 'Unknown'}kg\nHeight: ${patient.history?.height ?? 'Unknown'}cm';
+        final name = patient.name;
+
+        final age =
+            'Age: ${(DateTime.now().difference(patient.birthDate).inDays / 365.25).floor()}';
 
         return Container(
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Text(
-                        name,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Patient Profile',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(info),
-                      const SizedBox(height: 10),
-                    ],
+              Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                child: Center(
+                  child: Text(
+                    name[0],
+                    style: const TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    if (isInReviewState)
-                      ActionButton(
-                        icon: Icons.close,
-                        onTap: _denyReport,
-                      ),
-                    ActionButton(
-                      icon: Icons.check,
-                      onTap: _approveReport,
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 10),
+              Text(
+                name,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-              const SizedBox(width: 20),
+              Text(age),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isInReviewState) ...[
+                    ActionButton(
+                      icon: Icons.close,
+                      onTap: _denyReport,
+                    ),
+                    const SizedBox(width: 20)
+                  ],
+                  ActionButton(
+                    icon: Icons.check,
+                    onTap: _approveReport,
+                  ),
+                ],
+              ),
             ],
           ),
         );
@@ -152,19 +156,21 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 8, 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 95,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: const Color(0xFFE0E3E7), width: 2),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          color: const Color(0xFFD9D9D9),
+          borderRadius: BorderRadius.circular(70),
+          border: Border.all(color: const Color(0xFFE0E3E7), width: 2),
+        ),
+        child: Center(
+          child: Icon(
+            icon,
+            color: Colors.black,
           ),
-          child: Center(child: Icon(icon, color: Colors.black)),
         ),
       ),
     );

@@ -10,14 +10,16 @@ class Patient {
   final PatientHistory? history;
   final DateTime birthDate;
   final String id;
+  final String gender;
   final String phoneNumber;
 
   Patient({
+    required this.gender,
     required this.name,
-    this.history,
     required this.birthDate,
     required this.id,
     required this.phoneNumber,
+    this.history,
   });
 
   factory Patient.fromJson(Map<String, dynamic> json) =>
