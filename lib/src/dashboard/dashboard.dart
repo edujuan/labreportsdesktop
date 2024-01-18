@@ -123,25 +123,55 @@ class _DashboardWidgetState extends State<DashboardWidget>
 
   Widget _buildBiomarkersList(LabReportAndPatient selectedReport) {
     var labandpatient = selectedReport;
+
+    final biomarkers = groupBy(selectedReport.labReport.biomarkerValues.values,
+            (Biomarker b) => b.bucket)
+        .entries
+        .map(
+          (bucket) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  bucket.key,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              for (final b in bucket.value)
+                _buildBiomarkerRow(
+                  b.name,
+                  b.value.toString(),
+                  b.value,
+                  minimumRange: b.minValue,
+                  maximumRange: b.maxValue,
+                ),
+            ],
+          ),
+        )
+        .toList();
+
     return _buildSectionContainer(
-      children: labandpatient.labReport.biomarkerValues.values
-          .map((biomarker) => _buildBiomarkerRow(
-              biomarker.name, biomarker.value.toString(), biomarker.value,
-              minimumRange: biomarker.minValue,
-              maximumRange: biomarker.maxValue))
-          .toList(),
+      children: biomarkers,
     );
   }
 
-  Widget _buildBiomarkerRow(String title, String value, double valuePosition,
-      {double? minimumRange, double? maximumRange}) {
+  Widget _buildBiomarkerRow(
+    String title,
+    String value,
+    double valuePosition, {
+    double? minimumRange,
+    double? maximumRange,
+  }) {
     const double rangeSize = 120;
 
     double greenContainerWidth = rangeSize * 0.75;
     double greenStart = (1 - (greenContainerWidth / rangeSize)) * rangeSize;
     double expansionRation = 1.1;
 
-    // Alignment greenContainerAlignment = Alignment.center;
     Offset offsetValue = Offset(0, 0);
     double lineLeftPosition;
     Color lineColor = Colors.green;
@@ -452,5 +482,18 @@ class _DashboardWidgetState extends State<DashboardWidget>
       ),
       child: Column(children: children),
     );
+  }
+
+  // Method to group biomarkers by their bucket.
+  Map<K, List<T>> groupBy<T, K>(Iterable<T> values, K Function(T) keyFunction) {
+    var map = <K, List<T>>{};
+    for (var element in values) {
+      var key = keyFunction(element);
+      if (!map.containsKey(key)) {
+        map[key] = [];
+      }
+      map[key]!.add(element);
+    }
+    return map;
   }
 }
