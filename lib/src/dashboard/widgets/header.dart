@@ -31,11 +31,9 @@ class _HeaderState extends State<Header> {
     }
   }
 
-  Future<void> _denyReport() async {
-    final result = await _showDialog(
-      context,
-      'Notify patient to schedule an appointment?',
-    );
+  Future<void> _denyReport(String phoneNumber) async {
+    final result = await _showDialog(context,
+        'Please confirm your decision not to send the report to the patient at this time.\n\nPatient Contact Number: $phoneNumber\nConsider calling the patient to arrange an appointment.');
 
     if (result) {
       _bloc.add(DenyReportEvent(widget.report.labReport.id, true));
@@ -103,7 +101,7 @@ class _HeaderState extends State<Header> {
                   if (isInReviewState) ...[
                     ActionButton(
                       icon: Icons.close,
-                      onTap: _denyReport,
+                      onTap: () => _denyReport(patient.phoneNumber),
                     ),
                     const SizedBox(width: 20)
                   ],
@@ -152,7 +150,11 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const ActionButton({super.key, required this.icon, required this.onTap});
+  const ActionButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
