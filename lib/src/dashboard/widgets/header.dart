@@ -33,12 +33,10 @@ class _HeaderState extends State<Header> {
 
   Future<void> _denyReport(String phoneNumber) async {
     final result = await _showDialog(context,
-        'Please confirm your decision not to send the report to the patient at this time.\n\nPatient Contact Number: $phoneNumber\nConsider calling the patient to arrange an appointment.');
+        'The lab report will not be sent to the patient.\nShould the patient be notified to make an appointment?\nPatient Contact Number: $phoneNumber');
 
-    if (result) {
-      _bloc.add(DenyReportEvent(widget.report.labReport.id, true));
-      _sidebarBloc.add(RemoveSelectedReport());
-    }
+    _bloc.add(DenyReportEvent(widget.report.labReport.id, result));
+    _sidebarBloc.add(RemoveSelectedReport());
   }
 
   @override

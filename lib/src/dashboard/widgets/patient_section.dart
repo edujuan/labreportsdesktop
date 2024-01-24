@@ -25,7 +25,7 @@ class PatientSection extends StatelessWidget {
     return Column(
       children: [
         _buildBiomarkersRow(
-          'Biomarker Status',
+          'Overall Health Status',
           report.biomarkerValues.values.toList(),
         ),
         const SizedBox(height: 16),
@@ -54,7 +54,7 @@ class PatientSection extends StatelessWidget {
 
   Widget _buildBiomarkersRow(String title, List<Biomarker> biomarkers) {
     final totalCount = biomarkers.length;
-    final outOfRangeCount = biomarkers.where((e) => e.isOutOfRange).length;
+    final outOfRangeCount = biomarkers.where((e) => !e.isOutOfRange).length;
 
     return Container(
       width: double.infinity,
@@ -79,7 +79,7 @@ class PatientSection extends StatelessWidget {
           ),
           const Center(
             child: Text(
-              'out of range',
+              'in range',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
