@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../data/data.dart';
+import 'circular_progress_indicator.dart';
 
 class PatientSection extends StatelessWidget {
   final Patient patient;
@@ -53,9 +54,6 @@ class PatientSection extends StatelessWidget {
   }
 
   Widget _buildBiomarkersRow(String title, List<Biomarker> biomarkers) {
-    final totalCount = biomarkers.length;
-    final outOfRangeCount = biomarkers.where((e) => !e.isOutOfRange).length;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -72,6 +70,12 @@ class PatientSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Center(
+            child: CircularStatus(
+              biomarkers: biomarkers,
+              size: 140.0,
+            ),
+          ),
+          /*Center(
             child: Text(
               '$outOfRangeCount/$totalCount',
               style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
@@ -82,7 +86,7 @@ class PatientSection extends StatelessWidget {
               'in range',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
+          ),*/
           const SizedBox(height: 8),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lab4_doctors/src/core/theme.dart';
 
 import 'core/dependencies.dart';
 import 'dashboard/dashboard.dart';
@@ -17,9 +18,7 @@ class _AppState extends State<App> {
     return DependenciesScope(
       child: MaterialApp(
         title: 'Health Report',
-        theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0xFFF1F4F8),
-        ),
+        theme: theme,
         home: const Scaffold(
           body: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
