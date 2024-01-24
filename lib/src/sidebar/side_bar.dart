@@ -68,8 +68,9 @@ class _SidebarWidgetState extends State<SidebarWidget> {
                           );
                         },
                       ),
-                    ),
-                  const Spacer(),
+                    )
+                  else
+                    const Spacer(),
                   const UserCard(
                     name: 'Dr. John Strasse', // Replace with actual name
                     email: 'john.strasse@doc.com', // Replace with actual email
