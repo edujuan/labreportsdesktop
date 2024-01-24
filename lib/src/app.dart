@@ -17,6 +17,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return DependenciesScope(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Health Report',
         theme: theme,
         home: const Scaffold(
