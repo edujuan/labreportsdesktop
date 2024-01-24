@@ -367,6 +367,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
   }
 
   void _updateSummary(LabReportAndPatient selectedReport, String value) {
+    print("Summary updated with ${value}");
     _bloc.add(EditReportEvent(selectedReport.labReport.id, summary: value));
 
     final report = Report(
@@ -543,7 +544,7 @@ class _DashboardWidgetState extends State<DashboardWidget>
                             showAll = !showAll;
                           });
                         },
-                        icon: const Icon(Icons.filter_list_alt),
+                        icon: const Icon(Icons.filter_list_alt, color: Colors.black,),
                       )]),
                 ),
               ] +

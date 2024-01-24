@@ -4,11 +4,11 @@ part 'report_edit.g.dart';
 
 @JsonSerializable()
 class ReportEdit {
-  final String? executiveSummary;
+  final String? summary;
   final List<String>? recommendations;
 
   const ReportEdit({
-    this.executiveSummary,
+    this.summary,
     this.recommendations,
   });
 

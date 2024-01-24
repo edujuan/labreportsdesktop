@@ -180,7 +180,7 @@ class ApiClient {
       String id, String? summary, List<String>? recommendation) async {
     final response = await _request('/lab-reports/edit/$id',
         body: ReportEdit(
-                executiveSummary: summary, recommendations: recommendation)
+                summary: summary, recommendations: recommendation)
             .toJson());
     return Report.fromJson(response);
   }

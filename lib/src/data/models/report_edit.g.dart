@@ -7,7 +7,7 @@ part of 'report_edit.dart';
 // **************************************************************************
 
 ReportEdit _$ReportEditFromJson(Map<String, dynamic> json) => ReportEdit(
-      executiveSummary: json['executiveSummary'] as String?,
+      summary: json['summary'] as String?,
       recommendations: (json['recommendations'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -15,6 +15,6 @@ ReportEdit _$ReportEditFromJson(Map<String, dynamic> json) => ReportEdit(
 
 Map<String, dynamic> _$ReportEditToJson(ReportEdit instance) =>
     <String, dynamic>{
-      'executiveSummary': instance.executiveSummary,
+      'summary': instance.summary,
       'recommendations': instance.recommendations,
     };
